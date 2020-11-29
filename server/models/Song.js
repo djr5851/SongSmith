@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const _ = require('underscore');
 
-let DomoModel = {};
+let SongModel = {};
 
 const convertID = mongoose.Types.ObjectId;
 const setName = (name) => _.escape(name).trim();
+const setLyrics = (lyrics) => _.escape(lyrics).trim();
 
-const DomoSchema = new mongoose.Schema({
+const SongSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -16,10 +17,11 @@ const DomoSchema = new mongoose.Schema({
     set: setName,
   },
 
-  age: {
-    type: Number,
-    min: 0,
+  lyrics: {
+    type: String,
     required: true,
+    trim: true,
+    set: setLyrics,
   },
 
   owner: {
@@ -34,20 +36,20 @@ const DomoSchema = new mongoose.Schema({
   },
 });
 
-DomoSchema.statics.toAPI = (doc) => ({
+SongSchema.statics.toAPI = (doc) => ({
   name: doc.name,
-  age: doc.age,
+  lyrics: doc.lyrics,
 });
 
-DomoSchema.statics.findByOwner = (ownerID, callback) => {
+SongSchema.statics.findByOwner = (ownerID, callback) => {
   const search = {
     owner: convertID(ownerID),
   };
 
-  return DomoModel.find(search).select('name age').lean().exec(callback);
+  return SongModel.find(search).select('name lyrics').lean().exec(callback);
 };
 
-DomoModel = mongoose.model('Domo', DomoSchema);
+SongModel = mongoose.model('Song', SongSchema);
 
-module.exports.DomoModel = DomoModel;
-module.exports.DomoSchema = DomoSchema;
+module.exports.SongModel = SongModel;
+module.exports.SongSchema = SongSchema;

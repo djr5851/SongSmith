@@ -1,99 +1,119 @@
 "use strict";
 
-var handleDomo = function handleDomo(e) {
+var handleSong = function handleSong(e) {
   e.preventDefault();
-  $("domoMessage").animate({
+  ReactDOM.render( /*#__PURE__*/React.createElement(SongForm, {
+    visible: false
+  }), document.querySelector("#makeSong"));
+  $("songMessage").animate({
     width: 'hide'
   }, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
-    handleError("RAWR: All field are required");
+  if ($("#songName").val() == '' || $("#songLyrics").val() == '') {
+    handleError("All field are required");
     return false;
   }
 
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
+  sendAjax('POST', $("#songForm").attr("action"), $("#songForm").serialize(), function () {
+    loadSongsFromServer();
   });
   return false;
 };
 
-var DomoForm = function DomoForm(props) {
-  return /*#__PURE__*/React.createElement("form", {
-    id: "domoForm",
-    name: "domoForm",
-    onSubmit: handleDomo,
-    action: "/maker",
-    method: "POST",
-    className: "domoForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "name"
-  }, "Name: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoName",
-    type: "text",
-    name: "name",
-    placeholder: "Domo Name"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "age"
-  }, "Age: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoAge",
-    type: "text",
-    name: "age",
-    placeholder: "Domo Age"
-  }), /*#__PURE__*/React.createElement("input", {
-    type: "hidden",
-    name: "_csrf",
-    value: props.csrf
-  }), /*#__PURE__*/React.createElement("input", {
-    className: "makeDomoSubmit",
-    type: "submit",
-    value: "Make Domo"
-  }));
-};
-
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "domoList"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "emptyDomo"
-    }, "No Domos yet"));
+var SongForm = function SongForm(props) {
+  if (props.visible) {
+    return /*#__PURE__*/React.createElement("form", {
+      id: "songForm",
+      name: "songForm",
+      onSubmit: handleSong,
+      action: "/maker",
+      method: "POST",
+      className: "songForm"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "name"
+    }, "Name: "), /*#__PURE__*/React.createElement("input", {
+      id: "songName",
+      type: "text",
+      name: "name",
+      placeholder: "Song Name"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "lyrics"
+    }, "Lyrics: "), /*#__PURE__*/React.createElement("input", {
+      id: "songLyrics",
+      type: "text",
+      name: "lyrics",
+      placeholder: "Song Lyrics"
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "makeSongSubmit",
+      type: "submit",
+      value: "Make Song"
+    }));
   }
 
-  var domoNodes = props.domos.map(function (domo) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: domo._id,
-      className: "domo"
-    }, /*#__PURE__*/React.createElement("img", {
-      src: "/assets/img/domoface.jpeg",
-      alt: "domo face",
-      className: "domoFace"
-    }), /*#__PURE__*/React.createElement("h3", {
-      className: "domoName"
-    }, "Name ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-      className: "domoAge"
-    }, "Age: ", domo.age, " "));
-  });
-  return /*#__PURE__*/React.createElement("div", {
-    className: "domoList"
-  }, domoNodes);
+  return null;
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
-  sendAjax('GET', '/getDomos', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos
-    }), document.querySelector("#domos"));
+var SongList = function SongList(props) {
+  if (props.songs.length === 0) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "songList"
+    }, /*#__PURE__*/React.createElement("div", {
+      key: song._id,
+      className: "song"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: "/assets/img/songIcon.jpeg",
+      alt: "song icon",
+      className: "songIcon"
+    }), /*#__PURE__*/React.createElement("h3", {
+      className: "songName"
+    }, "+")));
+  }
+
+  var songNodes = props.songs.map(function (song) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: song._id,
+      className: "song"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: "/assets/img/songIcon.jpeg",
+      alt: "song icon",
+      className: "songIcon"
+    }), /*#__PURE__*/React.createElement("h3", {
+      className: "songName"
+    }, "Name ", song.name, " "), /*#__PURE__*/React.createElement("h3", {
+      className: "songLyrics"
+    }, "Lyrics: ", song.lyrics, " "));
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "songList"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "song",
+    onClick: getToken
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "/assets/img/songIcon.jpeg",
+    alt: "song icon",
+    className: "songIcon"
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "songName"
+  }, "+")), songNodes);
+};
+
+var loadSongsFromServer = function loadSongsFromServer() {
+  sendAjax('GET', '/getSongs', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(SongList, {
+      songs: data.songs
+    }), document.querySelector("#songs"));
   });
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
-    csrf: csrf
-  }), document.querySelector("#makeDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-    domos: []
-  }), document.querySelector("#domos"));
-  loadDomosFromServer();
+  ReactDOM.render( /*#__PURE__*/React.createElement(SongForm, {
+    csrf: csrf,
+    visible: true
+  }), document.querySelector("#makeSong"));
 };
 
 var getToken = function getToken() {
@@ -103,19 +123,23 @@ var getToken = function getToken() {
 };
 
 $(document).ready(function () {
-  getToken();
+  //getToken();
+  ReactDOM.render( /*#__PURE__*/React.createElement(SongList, {
+    songs: []
+  }), document.querySelector("#songs"));
+  loadSongsFromServer();
 });
 "use strict";
 
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({
+  $("#songMessage").animate({
     width: 'toggle'
   }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({
+  $("#songMessage").animate({
     width: 'hide'
   }, 350);
   window.location = response.redirect;
