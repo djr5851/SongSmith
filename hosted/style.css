@@ -325,6 +325,41 @@ h3.songLyrics {
     margin-bottom:10px;
 }
 
+.test:after {
+    content: '\2807';
+    font-size: 40px;
+    height: 50px;
+    width: 50px;
+    margin-top:10px;
+    float:right;
+}
+
+.dropdown {
+    position: absolute;
+    display: inline-block;
+    right: 0.4em;
+}
+
+.dropdown-content {
+    /* display: none; */
+    position: relative;
+    margin-top: 60px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {background-color: #f1f1f1}
+
 @media (min-width: 600px) {
     .songList { grid-template-columns: repeat(2, 1fr); }
 }

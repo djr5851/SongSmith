@@ -1,3 +1,4 @@
+
 // validate song and push to db
 const handleSong = (e) => {
     e.preventDefault();
@@ -40,7 +41,7 @@ const ConfirmDelete = (props) => {
             <form id="confirmDelete" 
                   name="confirmDelete"
                   onSubmit={deleteSong}
-                  action="/delete"
+                  action="/deleteSong"
                   method="POST"
                   className="confirmDelete"
             >
@@ -86,13 +87,59 @@ const SongForm = (props) => {
     return null;
 };
 
-// grid of songs and song creation button
+class DropdownMenu extends React.Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+          visible: false,
+        };
+        
+        this.showMenu = this.showMenu.bind(this);
+        this.closeMenu = this.closeMenu.bind(this);
+      }
+      
+      showMenu(e) {
+        e.preventDefault();
+        
+        this.setState({ visible: true }, () => {
+          document.addEventListener('click', this.closeMenu);
+        });
+      }
+      
+      closeMenu(e) {
+        
+        // if (!this.dropdownMenu.contains(e.target)) {
+          
+          this.setState({ visible: false }, () => {
+            document.removeEventListener('click', this.closeMenu);
+          });  
+          
+        // }
+      }
+    
+      render() {
+        return (
+            <div>
+              <div className="test" onClick={this.showMenu}></div>
+              { this.state.visible && 
+                    <div className="dropdown-content" ref={(e) => {this.dropdownMenu = e; }}>
+                      <a href="#">Edit</a>
+                      <a href="#" onClick={() => setConfirmDeleteVisible(true, this.props.songID)}>Delete</a>
+                    </div>
+              }
+            </div>
+        );
+      }
+    }
+    
+    // grid of songs and song creation button
 const SongList = function(props) {
     const songNodes = props.songs.map(function(song) {
         return (
             <div key={song._id} className="song">
-                <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon" />
-                <img src="/assets/img/songIcon.jpeg" alt="exit" className="exitButton" onClick={() => {setConfirmDeleteVisible(true, song._id)}} />
+                <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon"/>
+                <DropdownMenu songID={song._id}/>
                 <h3 className="songName">Name {song.name} </h3>
                 <h3 className="songLyrics">Lyrics: {song.lyrics} </h3>
             </div>
@@ -107,7 +154,7 @@ const SongList = function(props) {
             </div>
             {songNodes}
         </div>
-    )
+    );
 };
 
 // toggle song creation form

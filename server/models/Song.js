@@ -30,7 +30,12 @@ const SongSchema = new mongoose.Schema({
     ref: 'Account',
   },
 
-  createdData: {
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
+
+  lastModified: {
     type: Date,
     default: Date.now,
   },
@@ -48,6 +53,14 @@ SongSchema.statics.findByOwner = (ownerID, callback) => {
 
   return SongModel.find(search).select('name lyrics').lean().exec(callback);
 };
+
+SongSchema.statics.findByID = (songID, callback) => {
+  const search = {
+    _id: convertID(songID)
+  };
+
+  return SongModel.findOne(search).exec(callback);
+}
 
 SongModel = mongoose.model('Song', SongSchema);
 
