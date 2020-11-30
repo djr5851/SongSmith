@@ -1,3 +1,4 @@
+const { Model } = require('mongoose');
 const models = require('../models');
 
 const { Song } = models;
@@ -10,6 +11,17 @@ const makerPage = (req, res) => {
     }
     return res.render('app', { csrfToken: req.csrfToken(), songs: docs });
   });
+};
+
+const deleteSong = (req, res) => {    
+  if(!req.body.songID) {
+      return res.status(400).json({ error: 'An error occured' });
+  }
+
+  Song.SongModel.deleteOne({_id:req.body.songID}, () => {
+      res.json({ redirect: '/maker' });
+  });
+  return res.status(200);
 };
 
 const makeSong = (req, res) => {
@@ -58,3 +70,4 @@ const getSongs = (request, response) => {
 module.exports.makerPage = makerPage;
 module.exports.getSongs = getSongs;
 module.exports.make = makeSong;
+module.exports.delete = deleteSong;

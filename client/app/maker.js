@@ -1,9 +1,6 @@
+// validate song and push to db
 const handleSong = (e) => {
     e.preventDefault();
-
-    ReactDOM.render(
-        <SongForm visible={false}/>, document.querySelector("#makeSong")
-    );    
 
     $("songMessage").animate({width:'hide'},350);
 
@@ -12,6 +9,8 @@ const handleSong = (e) => {
         return false;
     }
 
+    SetSongFormVisible(false);
+
     sendAjax('POST', $("#songForm").attr("action"), $("#songForm").serialize(), function() {
         loadSongsFromServer();
     });
@@ -19,6 +18,51 @@ const handleSong = (e) => {
     return false;
 };
 
+// toggle confirm deletion window
+const setConfirmDeleteVisible = (visible, songID) => {
+    if (visible) {
+        sendAjax('GET', '/getToken', null, (result) => {
+            ReactDOM.render(
+                <ConfirmDelete visible={true} songID={songID} csrf={result.csrfToken}/>, document.querySelector("#makeSong")
+            );
+        });
+    }
+    else {
+        ReactDOM.render(
+            <ConfirmDelete visible={false}/>, document.querySelector("#makeSong")
+        );}
+};
+
+// confirm deletion window
+const ConfirmDelete = (props) => {
+    if (props.visible) {
+        return (
+            <form id="confirmDelete" 
+                  name="confirmDelete"
+                  onSubmit={deleteSong}
+                  action="/delete"
+                  method="POST"
+                  className="confirmDelete"
+            >
+                <input type="hidden" name="songID" value={props.songID}/>
+                <input type="hidden" name="_csrf" value={props.csrf}/>
+                <input className="confirmDeleteSubmit" type="submit" value="Delete Song" />
+            </form>
+        );
+    }
+    return null;
+};
+
+// delete a song from the db
+const deleteSong = (e) => {
+    e.preventDefault();
+    setConfirmDeleteVisible(false);
+    sendAjax('POST', $("#confirmDelete").attr("action"), $("#confirmDelete").serialize(), function() {
+        loadSongsFromServer();
+    });
+};
+
+// song creation form
 const SongForm = (props) => {
     if (props.visible) {
         return (
@@ -29,6 +73,7 @@ const SongForm = (props) => {
                   method="POST"
                   className="songForm"
             >
+                <img src="/assets/img/songIcon.jpeg" alt="exit" className="exitButton" onClick={() => SetSongFormVisible(false)} />
                 <label htmlFor="name">Name: </label>
                 <input id="songName" type="text" name="name" placeholder="Song Name"/>
                 <label htmlFor="lyrics">Lyrics: </label>
@@ -41,23 +86,13 @@ const SongForm = (props) => {
     return null;
 };
 
+// grid of songs and song creation button
 const SongList = function(props) {
-    if (props.songs.length === 0) {
-        return (
-            <div className="songList">
-                {/* <h3 className="emptySong">No Songs yet</h3> */}
-                <div key={song._id} className="song">
-                    <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon" />
-                    <h3 className="songName">+</h3>
-                </div>
-            </div>
-        );
-    }
-
     const songNodes = props.songs.map(function(song) {
         return (
             <div key={song._id} className="song">
                 <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon" />
+                <img src="/assets/img/songIcon.jpeg" alt="exit" className="exitButton" onClick={() => {setConfirmDeleteVisible(true, song._id)}} />
                 <h3 className="songName">Name {song.name} </h3>
                 <h3 className="songLyrics">Lyrics: {song.lyrics} </h3>
             </div>
@@ -66,7 +101,7 @@ const SongList = function(props) {
 
     return (
         <div className="songList">
-            <div className="song" onClick={getToken}>
+            <div className="song" onClick={() => SetSongFormVisible(true)}>
                 <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon" />
                 <h3 className="songName">+</h3>
             </div>
@@ -75,6 +110,23 @@ const SongList = function(props) {
     )
 };
 
+// toggle song creation form
+const SetSongFormVisible = (visible) => {
+    if (visible) {
+        sendAjax('GET', '/getToken', null, (result) => {
+            ReactDOM.render(
+                <SongForm csrf={result.csrfToken} visible={true}/>, document.querySelector("#makeSong")
+            );        
+        });
+    }
+    else {
+        ReactDOM.render(
+            <SongForm visible={false}/>, document.querySelector("#makeSong")
+        );            
+    }
+}
+
+// get songs from db
 const loadSongsFromServer = () => {
     sendAjax('GET', '/getSongs', null, (data) => {
         ReactDOM.render(
@@ -83,23 +135,9 @@ const loadSongsFromServer = () => {
     });
 };
 
-const setup = function(csrf) {
-    ReactDOM.render(
-        <SongForm csrf={csrf} visible={true}/>, document.querySelector("#makeSong")
-    );
-};
-
-const getToken = () => {
-    sendAjax('GET', '/getToken', null, (result) => {
-        setup(result.csrfToken);
-    });
-};
-
+// load songs once page loads
 $(document).ready(function() {
     //getToken();
-    ReactDOM.render(
-        <SongList songs={[]} />, document.querySelector("#songs")
-    );
 
     loadSongsFromServer();
 });

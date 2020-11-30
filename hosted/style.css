@@ -49,13 +49,17 @@ nav:nth-child(1) {
 
 .songForm {
     border: 2px solid #338acc;
-    height: 35px;
-    width: 700px;
-    margin-top:0px;
-    padding-top:10px;
+    height: 40em;
+    width: 40em;
+    left: 0;
+    right: 0;
+    top: 10em;
+    margin-left: auto;
+    margin-right: auto;
     background-color: #55acee;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
+    position: absolute;
 }
 
 .songForm label {
@@ -86,6 +90,49 @@ nav:nth-child(1) {
 }
 
 .makeSongSubmit:hover {
+    transition: background-color 0.4s ease;
+    background-color: #338acc;
+}
+
+.confirmDelete {
+    border: 2px solid #338acc;
+    height: 40em;
+    width: 40em;
+    left: 0;
+    right: 0;
+    top: 10em;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #55acee;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    position: absolute;
+}
+
+.confirmDelete label {
+    display: inline-block;
+    width: 75px;
+    margin-left: 10px;
+    font-size: 1.2em;
+    float: left;
+    color: white;
+}
+
+.confirmDeleteSubmit {
+    transition: background-color 0.4s ease;
+    display: inline;
+    width: 90px;
+    background-color: #55acee;
+    border-radius: 2px;
+    color: white;
+    text-decoration: none;
+}
+
+.confirmDeleteSubmit:link, .makeSongSubmit:visited, .makeSongSubmit:hover, .makeSongSubmit:active {
+    color: white;
+}
+
+.confirmDeleteSubmit:hover {
     transition: background-color 0.4s ease;
     background-color: #338acc;
 }
@@ -233,6 +280,16 @@ img.songIcon {
     border-radius: 4px;
     margin-top:10px;
     float:left;
+}
+
+img.exitButton {
+    margin-left: 25px;
+    margin-right: 10px;
+    height: 50px;
+    width: 50px;
+    border-radius: 4px;
+    margin-top:10px;
+    float:right;
 }
 
 h3.emptySong {
