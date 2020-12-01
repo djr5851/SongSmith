@@ -12,6 +12,9 @@ const router = (app) => {
   app.post('/maker', mid.requiresLogin, controllers.Song.make);
   app.post('/deleteSong', mid.requiresLogin, controllers.Song.delete);
   app.post('/updateSong', mid.requiresLogin, controllers.Song.update);
+  app.get('/account', mid.requiresLogin, controllers.Account.accountPage);
+  app.get('/getUsername', mid.requiresLogin, controllers.Account.getUsername);
+  app.post('/account', mid.requiresLogin, controllers.Account.updateAccount);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

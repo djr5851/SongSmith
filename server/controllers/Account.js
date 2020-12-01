@@ -6,6 +6,10 @@ const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
+const accountPage = (req, res) => {
+  res.render('account', { csrfToken: req.csrfToken() });
+};
+
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
@@ -77,6 +81,55 @@ const signup = (request, response) => {
   });
 };
 
+const updateAccount = (request, response) => {
+  const req = request;
+  const res = response;
+
+  req.body.currentPass = `${req.body.currentPass}`;
+  req.body.newPass = `${req.body.newPass}`;
+
+  if (!req.body.currentPass || !req.body.newPass) {
+    return res.status(400).json({ error: 'All fields are requred' });
+  }
+
+  const { username } = req.session.account;
+
+  return Account.AccountModel.authenticate(username, req.body.currentPass, (err, account) => {
+    if (err || !account) {
+      return res.status(401).json({ error: 'Password is incorrect' });
+    }
+
+    return Account.AccountModel.generateHash(req.body.newPass, (salt, hash) => {
+      const updatedAccount = account;
+      updatedAccount.salt = salt;
+      updatedAccount.password = hash;
+
+      const savePromise = updatedAccount.save();
+
+      savePromise.then(() => {
+        req.session.account = Account.AccountModel.toAPI(account);
+        return res.json({ redirect: '/logout' });
+      });
+
+      savePromise.catch((saveErr) => {
+        console.log(saveErr);
+        return res.status(400).json({ error: 'An error occurred' });
+      });
+    });
+  });
+};
+
+const getUsername = (request, response) => {
+  const req = request;
+  const res = response;
+
+  const usernameJSON = {
+    username: req.session.account.username,
+  };
+
+  res.json(usernameJSON);
+};
+
 const getToken = (request, response) => {
   const req = request;
   const res = response;
@@ -89,7 +142,10 @@ const getToken = (request, response) => {
 };
 
 module.exports.loginPage = loginPage;
+module.exports.accountPage = accountPage;
 module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.getUsername = getUsername;
+module.exports.updateAccount = updateAccount;
