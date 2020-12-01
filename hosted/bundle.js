@@ -23,7 +23,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 // validate song and push to db
-var handleSong = function handleSong(e) {
+var createSong = function createSong(e) {
   e.preventDefault();
   $("songMessage").animate({
     width: 'hide'
@@ -34,20 +34,20 @@ var handleSong = function handleSong(e) {
     return false;
   }
 
-  SetSongFormVisible(false);
-  sendAjax('POST', $("#songForm").attr("action"), $("#songForm").serialize(), function () {
+  setCreateSongVisible(false);
+  sendAjax('POST', $("#createSong").attr("action"), $("#createSong").serialize(), function () {
     loadSongsFromServer();
   });
   return false;
 }; // toggle confirm deletion window
 
 
-var setConfirmDeleteVisible = function setConfirmDeleteVisible(visible, songID) {
+var setConfirmDeleteVisible = function setConfirmDeleteVisible(visible, _id) {
   if (visible) {
     sendAjax('GET', '/getToken', null, function (result) {
       ReactDOM.render( /*#__PURE__*/React.createElement(ConfirmDelete, {
         visible: true,
-        songID: songID,
+        _id: _id,
         csrf: result.csrfToken
       }), document.querySelector("#makeSong"));
     });
@@ -70,8 +70,8 @@ var ConfirmDelete = function ConfirmDelete(props) {
       className: "confirmDelete"
     }, /*#__PURE__*/React.createElement("input", {
       type: "hidden",
-      name: "songID",
-      value: props.songID
+      name: "_id",
+      value: props._id
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
@@ -96,12 +96,12 @@ var deleteSong = function deleteSong(e) {
 }; // song creation form
 
 
-var SongForm = function SongForm(props) {
+var CreateSongForm = function CreateSongForm(props) {
   if (props.visible) {
     return /*#__PURE__*/React.createElement("form", {
-      id: "songForm",
-      name: "songForm",
-      onSubmit: handleSong,
+      id: "createSong",
+      name: "createSong",
+      onSubmit: createSong,
       action: "/maker",
       method: "POST",
       className: "songForm"
@@ -110,7 +110,7 @@ var SongForm = function SongForm(props) {
       alt: "exit",
       className: "exitButton",
       onClick: function onClick() {
-        return SetSongFormVisible(false);
+        return setCreateSongVisible(false);
       }
     }), /*#__PURE__*/React.createElement("label", {
       htmlFor: "name"
@@ -140,6 +140,73 @@ var SongForm = function SongForm(props) {
   return null;
 };
 
+var updateSong = function updateSong(e) {
+  e.preventDefault();
+  $("songMessage").animate({
+    width: 'hide'
+  }, 350);
+
+  if ($("#updateSongName").val() == '' || $("#updateSongLyrics").val() == '') {
+    handleError("All field are required");
+    return false;
+  }
+
+  setUpdateSongVisible(false);
+  sendAjax('POST', $("#updateSong").attr("action"), $("#updateSong").serialize(), function () {
+    loadSongsFromServer();
+  });
+  return false;
+}; // song update form
+
+
+var UpdateSongForm = function UpdateSongForm(props) {
+  if (props.visible) {
+    return /*#__PURE__*/React.createElement("form", {
+      id: "updateSong",
+      name: "updateSong",
+      onSubmit: updateSong,
+      action: "/updateSong",
+      method: "POST",
+      className: "songForm"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: "/assets/img/songIcon.jpeg",
+      alt: "exit",
+      className: "exitButton",
+      onClick: function onClick() {
+        return setCreateSongVisible(false);
+      }
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "name"
+    }, "Name: "), /*#__PURE__*/React.createElement("input", {
+      id: "updateSongName",
+      type: "text",
+      name: "name",
+      defaultValue: props.name
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "lyrics"
+    }, "Lyrics: "), /*#__PURE__*/React.createElement("input", {
+      id: "updateSongLyrics",
+      type: "text",
+      name: "lyrics",
+      defaultValue: props.lyrics
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_id",
+      value: props._id
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "makeSongSubmit",
+      type: "submit",
+      value: "Update Song"
+    }));
+  }
+
+  return null;
+};
+
 var DropdownMenu = /*#__PURE__*/function (_React$Component) {
   _inherits(DropdownMenu, _React$Component);
 
@@ -161,10 +228,9 @@ var DropdownMenu = /*#__PURE__*/function (_React$Component) {
 
   _createClass(DropdownMenu, [{
     key: "showMenu",
-    value: function showMenu(e) {
+    value: function showMenu() {
       var _this2 = this;
 
-      e.preventDefault();
       this.setState({
         visible: true
       }, function () {
@@ -173,15 +239,14 @@ var DropdownMenu = /*#__PURE__*/function (_React$Component) {
     }
   }, {
     key: "closeMenu",
-    value: function closeMenu(e) {
+    value: function closeMenu() {
       var _this3 = this;
 
-      // if (!this.dropdownMenu.contains(e.target)) {
       this.setState({
         visible: false
       }, function () {
         document.removeEventListener('click', _this3.closeMenu);
-      }); // }
+      });
     }
   }, {
     key: "render",
@@ -197,11 +262,16 @@ var DropdownMenu = /*#__PURE__*/function (_React$Component) {
           _this4.dropdownMenu = e;
         }
       }, /*#__PURE__*/React.createElement("a", {
-        href: "#"
+        href: "#",
+        onClick: function onClick() {
+          setUpdateSongVisible(true, _this4.props.song);
+          return false;
+        }
       }, "Edit"), /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
-          return setConfirmDeleteVisible(true, _this4.props.songID);
+          setConfirmDeleteVisible(true, _this4.props.song._id);
+          return false;
         }
       }, "Delete")));
     }
@@ -221,7 +291,7 @@ var SongList = function SongList(props) {
       alt: "song icon",
       className: "songIcon"
     }), /*#__PURE__*/React.createElement(DropdownMenu, {
-      songID: song._id
+      song: song
     }), /*#__PURE__*/React.createElement("h3", {
       className: "songName"
     }, "Name ", song.name, " "), /*#__PURE__*/React.createElement("h3", {
@@ -233,7 +303,7 @@ var SongList = function SongList(props) {
   }, /*#__PURE__*/React.createElement("div", {
     className: "song",
     onClick: function onClick() {
-      return SetSongFormVisible(true);
+      return setCreateSongVisible(true);
     }
   }, /*#__PURE__*/React.createElement("img", {
     src: "/assets/img/songIcon.jpeg",
@@ -245,16 +315,35 @@ var SongList = function SongList(props) {
 }; // toggle song creation form
 
 
-var SetSongFormVisible = function SetSongFormVisible(visible) {
+var setCreateSongVisible = function setCreateSongVisible(visible) {
   if (visible) {
     sendAjax('GET', '/getToken', null, function (result) {
-      ReactDOM.render( /*#__PURE__*/React.createElement(SongForm, {
+      ReactDOM.render( /*#__PURE__*/React.createElement(CreateSongForm, {
         csrf: result.csrfToken,
         visible: true
       }), document.querySelector("#makeSong"));
     });
   } else {
-    ReactDOM.render( /*#__PURE__*/React.createElement(SongForm, {
+    ReactDOM.render( /*#__PURE__*/React.createElement(CreateSongForm, {
+      visible: false
+    }), document.querySelector("#makeSong"));
+  }
+}; // toggle song update form
+
+
+var setUpdateSongVisible = function setUpdateSongVisible(visible, song) {
+  if (visible) {
+    sendAjax('GET', '/getToken', null, function (result) {
+      ReactDOM.render( /*#__PURE__*/React.createElement(UpdateSongForm, {
+        _id: song._id,
+        name: song.name,
+        lyrics: song.lyrics,
+        csrf: result.csrfToken,
+        visible: true
+      }), document.querySelector("#makeSong"));
+    });
+  } else {
+    ReactDOM.render( /*#__PURE__*/React.createElement(UpdateSongForm, {
       visible: false
     }), document.querySelector("#makeSong"));
   }

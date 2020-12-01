@@ -56,11 +56,11 @@ SongSchema.statics.findByOwner = (ownerID, callback) => {
 
 SongSchema.statics.findByID = (songID, callback) => {
   const search = {
-    _id: convertID(songID)
+    _id: convertID(songID),
   };
 
   return SongModel.findOne(search).exec(callback);
-}
+};
 
 SongModel = mongoose.model('Song', SongSchema);
 

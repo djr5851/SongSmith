@@ -13,11 +13,11 @@ const makerPage = (req, res) => {
 };
 
 const deleteSong = (req, res) => {
-  if (!req.body.songID) {
+  if (!req.body._id) {
     return res.status(400).json({ error: 'An error occured' });
   }
 
-  Song.SongModel.deleteOne({ _id: req.body.songID }, () => {
+  Song.SongModel.deleteOne({ _id: req.body._id }, () => {
     res.json({ redirect: '/maker' });
   });
   return res.status(200);
@@ -57,9 +57,9 @@ const updatesong = (req, res) => {
     return res.status(400).json({ error: 'Request requires id' });
   }
 
-  return Song.SongModel.findByID(req.body._id, (err, docs) => {
-    if (err) {
-      console.log(err);
+  return Song.SongModel.findByID(req.body._id, (error, docs) => {
+    if (error) {
+      console.log(error);
 
       return res.status(400).json({ error: 'An error occured.' });
     }
