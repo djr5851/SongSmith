@@ -59,7 +59,7 @@ app.use(session({
   store: new RedisStore({
     client: redisClient,
   }),
-  secret: 'Beep Boop',
+  secret: 'songsmith',
   resave: true,
   saveUninitialized: true,
   cookie: {

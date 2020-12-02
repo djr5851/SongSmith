@@ -91,9 +91,10 @@ nav:nth-child(1) {
     box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
-tool:hover {
-    background-color: #ee0000;
+.tool:hover {
+    background-color: #e9e9e9;
 }
+
 .songNameInput {
     display: block;
     margin: 0 auto;
@@ -122,15 +123,6 @@ tool:hover {
     z-index: 400;
 }
 
-.confirmDelete label {
-    display: inline-block;
-    width: 75px;
-    margin-left: 10px;
-    font-size: 1.2em;
-    float: left;
-    color: white;
-}
-
 .confirmDeleteSubmit {
     transition: background-color 0.4s ease;
     display: inline;
@@ -139,15 +131,6 @@ tool:hover {
     border-radius: 2px;
     color: white;
     text-decoration: none;
-}
-
-.confirmDeleteSubmit:link, .makeSongSubmit:visited, .makeSongSubmit:hover, .makeSongSubmit:active {
-    color: white;
-}
-
-.confirmDeleteSubmit:hover {
-    transition: background-color 0.4s ease;
-    background-color: #338acc;
 }
 
 .mainForm {
@@ -251,11 +234,6 @@ h1 {
     align-content: center;
 }
 
-#accountForm {
-    /* margin-top: 50px; */
-}
-
-
 #errorMessage {
     display:none;
     width: 250px;
@@ -281,13 +259,6 @@ h1 {
     height: 120px;
     width: 250px;
     z-index:300;
-}
-
-#error {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: red;
-    font-style: italic;
 }
 
 .song {
@@ -378,7 +349,7 @@ h3.songLyrics {
     font-size: 1.5em;
 }
 
-.test:after {
+.threeDots:after {
     content: '\2807';
     font-size: 40px;
     height: 50px;
@@ -394,7 +365,6 @@ h3.songLyrics {
 }
 
 .dropdownContent {
-    /* display: none; */
     position: absolute;
     margin-top: 60px;
     background-color: #f9f9f9;

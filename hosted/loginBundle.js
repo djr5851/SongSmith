@@ -1,5 +1,6 @@
 "use strict";
 
+// attempt to log user in
 var handleLogin = function handleLogin(e) {
   e.preventDefault();
   $("#errorMessage").fadeOut();
@@ -9,10 +10,10 @@ var handleLogin = function handleLogin(e) {
     return false;
   }
 
-  console.log($("input[name=_csrf]").val());
   sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
   return false;
-};
+}; // attempt to add user to db
+
 
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
@@ -30,7 +31,8 @@ var handleSignup = function handleSignup(e) {
 
   sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
   return false;
-};
+}; // window containing login form
+
 
 var LoginWindow = function LoginWindow(props) {
   return /*#__PURE__*/React.createElement("div", {
@@ -66,7 +68,8 @@ var LoginWindow = function LoginWindow(props) {
     id: "signupLink",
     href: "/signup"
   }, "Sign up"))));
-};
+}; // window containg signup form
+
 
 var SignupWindow = function SignupWindow(props) {
   return /*#__PURE__*/React.createElement("div", {
@@ -108,12 +111,14 @@ var SignupWindow = function SignupWindow(props) {
     id: "signinLink",
     href: "/signup"
   }, "Sign in"))));
-};
+}; // render login window
+
 
 var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
   }), document.querySelector("#content"), function () {
+    // set up sign in link
     var signupLink = document.querySelector("#signupLink");
     signupLink.addEventListener("click", function (e) {
       e.preventDefault();
@@ -121,12 +126,14 @@ var createLoginWindow = function createLoginWindow(csrf) {
       return false;
     });
   });
-};
+}; // render signup window
+
 
 var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(SignupWindow, {
     csrf: csrf
   }), document.querySelector("#content"), function () {
+    // set up log in link
     var signinLink = document.querySelector("#signinLink");
     signinLink.addEventListener("click", function (e) {
       e.preventDefault();
@@ -134,7 +141,8 @@ var createSignupWindow = function createSignupWindow(csrf) {
       return false;
     });
   });
-};
+}; // set up login/signup buttons and pass in csrf
+
 
 var setup = function setup(csrf) {
   var loginButton = document.querySelector("#loginButton");
@@ -150,7 +158,8 @@ var setup = function setup(csrf) {
     return false;
   });
   createLoginWindow(csrf); // default view
-};
+}; // request csrf token
+
 
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {
@@ -163,15 +172,18 @@ $(document).ready(function () {
 });
 "use strict";
 
+// fill out and animate error message
 var handleError = function handleError(message) {
   $("#message").text(message);
   $("#errorMessage").fadeIn();
-};
+}; // redirect to given link
+
 
 var redirect = function redirect(response) {
   $("#errorMessage").fadeOut();
   window.location = response.redirect;
-};
+}; // make an ajax request
+
 
 var sendAjax = function sendAjax(type, action, data, success) {
   $.ajax({

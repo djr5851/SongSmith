@@ -2,19 +2,23 @@ const models = require('../models');
 
 const { Account } = models;
 
+// render login view
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
+// render account view
 const accountPage = (req, res) => {
   res.render('account', { csrfToken: req.csrfToken() });
 };
 
+// handle logout
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
 };
 
+// handle login attempt
 const login = (request, response) => {
   const req = request;
   const res = response;
@@ -33,10 +37,11 @@ const login = (request, response) => {
 
     req.session.account = Account.AccountModel.toAPI(account);
 
-    return res.json({ redirect: 'maker' });
+    return res.json({ redirect: 'dashboard' });
   });
 };
 
+// handle signup attempt
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -66,7 +71,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      return res.json({ redirect: '/maker' });
+      return res.json({ redirect: '/dashboard' });
     });
 
     savePromise.catch((err) => {
@@ -81,6 +86,7 @@ const signup = (request, response) => {
   });
 };
 
+// handle password change
 const updateAccount = (request, response) => {
   const req = request;
   const res = response;
@@ -119,6 +125,7 @@ const updateAccount = (request, response) => {
   });
 };
 
+// return the username for the current session
 const getUsername = (request, response) => {
   const req = request;
   const res = response;
@@ -130,6 +137,7 @@ const getUsername = (request, response) => {
   res.json(usernameJSON);
 };
 
+// request csrf token
 const getToken = (request, response) => {
   const req = request;
   const res = response;

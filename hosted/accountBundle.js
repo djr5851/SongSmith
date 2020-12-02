@@ -1,5 +1,6 @@
 "use strict";
 
+// handle change password
 var updateAccount = function updateAccount(e) {
   e.preventDefault();
   $("#errorMessage").fadeOut();
@@ -14,7 +15,6 @@ var updateAccount = function updateAccount(e) {
     return false;
   }
 
-  console.dir($("#accountForm").serialize());
   sendAjax('POST', $("#accountForm").attr("action"), $("#accountForm").serialize(), redirect);
   return false;
 }; // account edit form
@@ -58,20 +58,23 @@ var AccountForm = function AccountForm(props) {
     type: "submit",
     value: "Save"
   })));
-};
+}; // render account update form
+
 
 var createAccountForm = function createAccountForm(csrf, username) {
   ReactDOM.render( /*#__PURE__*/React.createElement(AccountForm, {
     csrf: csrf,
     username: username
   }), document.querySelector("#content"));
-};
+}; // load username and csrf
+
 
 var setup = function setup(csrf) {
   sendAjax('GET', '/getUsername', null, function (result) {
     createAccountForm(csrf, result.username);
   });
-};
+}; // request csrf token
+
 
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {
@@ -84,15 +87,18 @@ $(document).ready(function () {
 });
 "use strict";
 
+// fill out and animate error message
 var handleError = function handleError(message) {
   $("#message").text(message);
   $("#errorMessage").fadeIn();
-};
+}; // redirect to given link
+
 
 var redirect = function redirect(response) {
   $("#errorMessage").fadeOut();
   window.location = response.redirect;
-};
+}; // make an ajax request
+
 
 var sendAjax = function sendAjax(type, action, data, success) {
   $.ajax({

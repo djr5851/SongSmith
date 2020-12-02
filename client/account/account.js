@@ -1,3 +1,4 @@
+// handle change password
 const updateAccount = (e) => {
     e.preventDefault();
 
@@ -12,8 +13,6 @@ const updateAccount = (e) => {
         handleError("Passwords do not match");
         return false;
     }
-
-    console.dir($("#accountForm").serialize());
 
     sendAjax('POST', $("#accountForm").attr("action"), $("#accountForm").serialize(), redirect);
     
@@ -42,7 +41,7 @@ const AccountForm = (props) => {
     );
 };
 
-
+// render account update form
 const createAccountForm = (csrf, username) => {
     ReactDOM.render(
         <AccountForm csrf={csrf} username={username}/>,
@@ -50,12 +49,14 @@ const createAccountForm = (csrf, username) => {
     );
 };
 
+// load username and csrf
 const setup = (csrf) => {
     sendAjax('GET', '/getUsername', null, (result) => {
         createAccountForm(csrf, result.username);
     });
 }
 
+// request csrf token
 const getToken = () => {
     sendAjax('GET', '/getToken', null, (result) => {
         setup(result.csrfToken);

@@ -1,3 +1,4 @@
+// attempt to log user in
 const handleLogin = (e) => {
     e.preventDefault();
 
@@ -8,13 +9,12 @@ const handleLogin = (e) => {
         return false;
     }
 
-    console.log($("input[name=_csrf]").val());
-
     sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
 
     return false;
 }
 
+// attempt to add user to db
 const handleSignup = (e) => {
     e.preventDefault();
 
@@ -35,6 +35,7 @@ const handleSignup = (e) => {
     return false;
 }
 
+// window containing login form
 const LoginWindow = (props) => {
     return (
         <div id="loginBox">
@@ -57,6 +58,7 @@ const LoginWindow = (props) => {
     );
 };
 
+// window containg signup form
 const SignupWindow = (props) => {
     return (
         <div id="loginBox">
@@ -79,11 +81,13 @@ const SignupWindow = (props) => {
     );
 };
 
+// render login window
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
         document.querySelector("#content"),
         () => {
+            // set up sign in link
             const signupLink = document.querySelector("#signupLink");
             signupLink.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -94,11 +98,13 @@ const createLoginWindow = (csrf) => {
     );
 };
 
+// render signup window
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
         <SignupWindow csrf={csrf} />,
         document.querySelector("#content"),
         () => {
+            // set up log in link
             const signinLink = document.querySelector("#signinLink");
             signinLink.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -109,6 +115,7 @@ const createSignupWindow = (csrf) => {
     );
 };
 
+// set up login/signup buttons and pass in csrf
 const setup = (csrf) => {
     const loginButton = document.querySelector("#loginButton");
     const signupButton = document.querySelector("#signupButton");
@@ -128,6 +135,7 @@ const setup = (csrf) => {
     createLoginWindow(csrf); // default view
 }
 
+// request csrf token
 const getToken = () => {
     sendAjax('GET', '/getToken', null, (result) => {
         setup(result.csrfToken);

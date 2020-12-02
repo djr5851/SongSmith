@@ -20,7 +20,8 @@ var createSong = function createSong(e) {
   if ($("#songName").val() == '' || $("#songLyrics").val() == '') {
     handleError("All fields are required");
     return false;
-  }
+  } // close form after validating
+
 
   setCreateSongVisible(false);
   sendAjax('POST', $("#createSong").attr("action"), $("#createSong").serialize(), function () {
@@ -99,7 +100,7 @@ var CreateSongForm = function CreateSongForm(props) {
       id: "createSong",
       name: "createSong",
       onSubmit: createSong,
-      action: "/maker",
+      action: "/dashboard",
       method: "POST",
       className: "songForm"
     }, /*#__PURE__*/React.createElement("img", {
@@ -186,7 +187,8 @@ var UpdateSongForm = function UpdateSongForm(props) {
   }
 
   return null;
-};
+}; // handle updating a song in the database
+
 
 var updateSong = function updateSong(e) {
   e.preventDefault();
@@ -195,21 +197,25 @@ var updateSong = function updateSong(e) {
   if ($("#updateSongName").val() == '' || $("#updateSongLyrics").val() == '') {
     handleError("All fields are required");
     return false;
-  }
+  } // hide form after validation
+
 
   setUpdateSongVisible(false);
   sendAjax('POST', $("#updateSong").attr("action"), $("#updateSong").serialize(), function () {
     loadSongsFromServer();
   });
   return false;
-};
+}; // insert and highlight text that will be parsed as a chord
+
 
 var InsertChord = function InsertChord() {
+  // find cursor position and insert chord template
   var cursorPos = $('textarea').prop('selectionStart');
   var text = $('textarea').val();
   var textBefore = text.substring(0, cursorPos);
   var textAfter = text.substring(cursorPos, text.length);
-  $('textarea').val(textBefore + "^[*chord*]" + textAfter);
+  $('textarea').val(textBefore + "^[*chord*]" + textAfter); // find template and select it
+
   var searchText = "*chord*";
   var textarea = document.querySelector("textarea");
   var pos = textarea.value.indexOf(searchText);
@@ -219,7 +225,8 @@ var InsertChord = function InsertChord() {
     textarea.selectionStart = pos;
     textarea.selectionEnd = pos + searchText.length;
   }
-};
+}; // drop down menu for songs
+
 
 var DropdownMenu = function DropdownMenu(props) {
   var _React$useState = React.useState(false),
@@ -238,7 +245,7 @@ var DropdownMenu = function DropdownMenu(props) {
   };
 
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "test",
+    className: "threeDots",
     onClick: showMenu
   }), visible && /*#__PURE__*/React.createElement("div", {
     className: "dropdownContent"
@@ -276,7 +283,7 @@ var SongList = function SongList(props) {
 
   var setupSongView = function setupSongView(e, song) {
     // dont open if clicking dropdown or its links
-    if (e.target.className !== "test" && e.target.tagName !== "A") {
+    if (e.target.className !== "threeDots" && e.target.tagName !== "A") {
       setOpenSongVisible(true);
       setOpenSongName(song.name);
       setOpenSongLyrics(song.lyrics);
@@ -286,12 +293,14 @@ var SongList = function SongList(props) {
   };
 
   var closeSongView = function closeSongView(e) {
+    // only close if clicking outside of window or on exit button
     if (e.target.id === "overlay" || e.target.className === "exitButton") {
       setOpenSongVisible(false);
       $("#overlay").fadeOut();
       document.removeEventListener('click', closeSongView);
     }
-  };
+  }; // load in songs and create elements for them
+
 
   var songNodes = props.songs.map(function (song) {
     return /*#__PURE__*/React.createElement("div", {
@@ -309,7 +318,8 @@ var SongList = function SongList(props) {
     }), /*#__PURE__*/React.createElement("h3", null, "\u200E\u200E \u200E"), /*#__PURE__*/React.createElement("div", {
       className: "songName"
     }, /*#__PURE__*/React.createElement("h3", null, song.name, " ")));
-  });
+  }); // render all song elements
+
   return /*#__PURE__*/React.createElement("div", {
     className: "songList"
   }, openSongVisible && /*#__PURE__*/React.createElement(SongView, {
@@ -323,7 +333,8 @@ var SongList = function SongList(props) {
   }, /*#__PURE__*/React.createElement("h3", {
     className: "addSong"
   }, "+")), songNodes);
-};
+}; // find chords and seperate them into divs
+
 
 var parseChords = function parseChords() {
   var lyrics = document.querySelector("#lyrics");
@@ -339,7 +350,8 @@ var parseChords = function parseChords() {
     var cleanup = temp.replace(/[\^]+/g, "");
     lyrics.innerHTML = cleanup;
   }
-};
+}; // song viewing window with parsed chords
+
 
 var SongView = function SongView(props) {
   React.useEffect(function () {
@@ -420,15 +432,18 @@ $(document).ready(function () {
 });
 "use strict";
 
+// fill out and animate error message
 var handleError = function handleError(message) {
   $("#message").text(message);
   $("#errorMessage").fadeIn();
-};
+}; // redirect to given link
+
 
 var redirect = function redirect(response) {
   $("#errorMessage").fadeOut();
   window.location = response.redirect;
-};
+}; // make an ajax request
+
 
 var sendAjax = function sendAjax(type, action, data, success) {
   $.ajax({

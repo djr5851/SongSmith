@@ -2,7 +2,8 @@ const models = require('../models');
 
 const { Song } = models;
 
-const makerPage = (req, res) => {
+// render dashboard for current user
+const dashboardPage = (req, res) => {
   Song.SongModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
       console.log(err);
@@ -12,18 +13,20 @@ const makerPage = (req, res) => {
   });
 };
 
+// remove a song from the db
 const deleteSong = (req, res) => {
   if (!req.body._id) {
     return res.status(400).json({ error: 'An error occured' });
   }
 
   Song.SongModel.deleteOne({ _id: req.body._id }, () => {
-    res.json({ redirect: '/maker' });
+    res.json({ redirect: '/dashboard' });
   });
   return res.status(200);
 };
 
-const makeSong = (req, res) => {
+// add a new song to the db
+const createSong = (req, res) => {
   if (!req.body.name || !req.body.lyrics) {
     return res.status(400).json({ error: 'Name and lyrics are required' });
   }
@@ -38,7 +41,7 @@ const makeSong = (req, res) => {
 
   const songPromise = newSong.save();
 
-  songPromise.then(() => res.json({ redirect: '/maker' }));
+  songPromise.then(() => res.json({ redirect: '/dashboard' }));
 
   songPromise.catch((err) => {
     console.log(err);
@@ -52,6 +55,7 @@ const makeSong = (req, res) => {
   return songPromise;
 };
 
+// update a song already in the db
 const updatesong = (req, res) => {
   if (!req.body._id) {
     return res.status(400).json({ error: 'Request requires id' });
@@ -92,6 +96,7 @@ const updatesong = (req, res) => {
   });
 };
 
+// retrieve a json object of songs from the db
 const getSongs = (request, response) => {
   const req = request;
   const res = response;
@@ -106,8 +111,8 @@ const getSongs = (request, response) => {
   });
 };
 
-module.exports.makerPage = makerPage;
+module.exports.dashboardPage = dashboardPage;
 module.exports.getSongs = getSongs;
-module.exports.make = makeSong;
+module.exports.create = createSong;
 module.exports.delete = deleteSong;
 module.exports.update = updatesong;

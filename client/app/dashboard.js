@@ -1,4 +1,3 @@
-
 // validate song and push to db
 const createSong = (e) => {
     e.preventDefault();
@@ -10,6 +9,7 @@ const createSong = (e) => {
         return false;
     }
 
+    // close form after validating
     setCreateSongVisible(false);
 
     sendAjax('POST', $("#createSong").attr("action"), $("#createSong").serialize(), function() {
@@ -74,7 +74,7 @@ const CreateSongForm = (props) => {
             <form id="createSong" 
                   name="createSong"
                   onSubmit={createSong}
-                  action="/maker"
+                  action="/dashboard"
                   method="POST"
                   className="songForm"
             >
@@ -114,7 +114,7 @@ const UpdateSongForm = (props) => {
     return null;
 };
 
-
+// handle updating a song in the database
 const updateSong = (e) => {
     e.preventDefault();
 
@@ -125,6 +125,7 @@ const updateSong = (e) => {
         return false;
     }
 
+    // hide form after validation
     setUpdateSongVisible(false);
 
     sendAjax('POST', $("#updateSong").attr("action"), $("#updateSong").serialize(), function() {
@@ -135,25 +136,30 @@ const updateSong = (e) => {
 
 }
 
+// insert and highlight text that will be parsed as a chord
 const InsertChord = () => {
+    // find cursor position and insert chord template
     let cursorPos = $('textarea').prop('selectionStart');
     let text = $('textarea').val();
     let textBefore = text.substring(0,  cursorPos);
     let textAfter  = text.substring(cursorPos, text.length);
     $('textarea').val(textBefore + "^[*chord*]" + textAfter);
 
+    // find template and select it
     let searchText = "*chord*";
     let textarea = document.querySelector("textarea");
     let pos = textarea.value.indexOf(searchText);
     if(pos!=-1) {
-    textarea.focus();
-    textarea.selectionStart = pos;
-    textarea.selectionEnd = pos+searchText.length
+        textarea.focus();
+        textarea.selectionStart = pos;
+        textarea.selectionEnd = pos+searchText.length
     }
 }
 
+// drop down menu for songs
 const DropdownMenu = (props) => {
     const [visible, setVisible] = React.useState(false);
+
     const showMenu = () => {
         setVisible(true);
         document.addEventListener('click', closeMenu);
@@ -166,7 +172,7 @@ const DropdownMenu = (props) => {
     
     return (
         <div>
-            <div className="test" onClick={showMenu}></div>
+            <div className="threeDots" onClick={showMenu}></div>
             { visible && 
                 <div className="dropdownContent">
                     <a href="#" onClick={() => {setUpdateSongVisible(true, props.song); return false;}}>Edit</a>
@@ -186,7 +192,7 @@ const SongList = function(props) {
     
     const setupSongView = (e, song) => {
         // dont open if clicking dropdown or its links
-        if(e.target.className !== "test" && e.target.tagName !== "A")
+        if(e.target.className !== "threeDots" && e.target.tagName !== "A")
         {
             setOpenSongVisible(true);
             setOpenSongName(song.name);
@@ -197,6 +203,7 @@ const SongList = function(props) {
     }
 
     const closeSongView = (e) => {
+        // only close if clicking outside of window or on exit button
         if (e.target.id === "overlay" || e.target.className === "exitButton")
         {
             setOpenSongVisible(false);
@@ -205,6 +212,7 @@ const SongList = function(props) {
         }
     }
 
+    // load in songs and create elements for them
     const songNodes = props.songs.map(function(song) {
         return (
             <div key={song._id} className="song" onClick={(e) => setupSongView(e, song)}>
@@ -218,6 +226,7 @@ const SongList = function(props) {
         );
     });
 
+    // render all song elements
     return (
         <div className="songList">
             {openSongVisible && <SongView name={openSongName} lyrics={openSongLyrics}/>}
@@ -229,6 +238,7 @@ const SongList = function(props) {
     );
 };
 
+// find chords and seperate them into divs
 const parseChords = () => {
     let lyrics = document.querySelector("#lyrics");
     let chords = lyrics.innerHTML.match(/(?<=\[).+?(?=\])/g);
@@ -242,6 +252,7 @@ const parseChords = () => {
     }
 }
 
+// song viewing window with parsed chords
 const SongView = (props) => {
     React.useEffect(() => {
         const script = document.createElement('script');
