@@ -3,10 +3,10 @@
 const createSong = (e) => {
     e.preventDefault();
 
-    $("songMessage").animate({width:'hide'},350);
+    $("#errorMessage").fadeOut()
 
     if($("#songName").val() == '' || $("#songLyrics").val() == '') {
-        handleError("All field are required");
+        handleError("All fields are required");
         return false;
     }
 
@@ -20,15 +20,17 @@ const createSong = (e) => {
 };
 
 // toggle confirm deletion window
-const setConfirmDeleteVisible = (visible, _id) => {
+const setConfirmDeleteVisible = (visible, song) => {
     if (visible) {
+        $("#overlay").fadeIn();
         sendAjax('GET', '/getToken', null, (result) => {
             ReactDOM.render(
-                <ConfirmDelete visible={true} _id={_id} csrf={result.csrfToken}/>, document.querySelector("#makeSong")
+                <ConfirmDelete visible={true} song={song} csrf={result.csrfToken}/>, document.querySelector("#makeSong")
             );
         });
     }
     else {
+        $("#overlay").fadeOut();
         ReactDOM.render(
             <ConfirmDelete visible={false}/>, document.querySelector("#makeSong")
         );}
@@ -45,9 +47,11 @@ const ConfirmDelete = (props) => {
                   method="POST"
                   className="confirmDelete"
             >
-                <input type="hidden" name="_id" value={props._id}/>
+                <img src="/assets/img/exit.png" alt="exit" className="exitButton" onClick={() => setConfirmDeleteVisible(false)} />
+                <h1>Delete "{props.song.name}"?</h1>
+                <input type="hidden" name="_id" value={props.song._id}/>
                 <input type="hidden" name="_csrf" value={props.csrf}/>
-                <input className="confirmDeleteSubmit" type="submit" value="Delete Song" />
+                <input className="formSubmit" type="submit" value="Confirm" />
             </form>
         );
     }
@@ -74,26 +78,50 @@ const CreateSongForm = (props) => {
                   method="POST"
                   className="songForm"
             >
-                <img src="/assets/img/songIcon.jpeg" alt="exit" className="exitButton" onClick={() => setCreateSongVisible(false)} />
-                <label htmlFor="name">Name: </label>
-                <input id="songName" type="text" name="name" placeholder="Song Name"/>
-                <label htmlFor="lyrics">Lyrics: </label>
-                <input id="songLyrics" type="text" name="lyrics" placeholder="Song Lyrics"/>
+                <img src="/assets/img/exit.png" alt="exit" className="exitButton" onClick={() => setCreateSongVisible(false)} />
+                <input id="songName" className="songNameInput" type="text" name="name" placeholder="Song Name"/>
+                <button className="tool" type="button" onClick={InsertChord}>InsertChord</button>
+                <textarea id="songLyrics" type="text" name="lyrics" placeholder="Song Lyrics"/>
                 <input type="hidden" name="_csrf" value={props.csrf}/>
-                <input className="makeSongSubmit" type="submit" value="Make Song" />
+                <input className="formSubmit" type="submit" value="Make Song" />
             </form>
         );
     }
     return null;
 };
 
+// song update form
+const UpdateSongForm = (props) => {
+    if (props.visible) {
+        return (
+            <form id="updateSong" 
+                  name="updateSong"
+                  onSubmit={updateSong}
+                  action="/updateSong"
+                  method="POST"
+                  className="songForm"
+            >
+                <img src="/assets/img/exit.png" alt="exit" className="exitButton" onClick={() => setUpdateSongVisible(false)} />
+                <input id="updateSongName" className="songNameInput" type="text" name="name" defaultValue={props.name}/>
+                <button className="tool" type="button" onClick={InsertChord}>InsertChord</button>
+                <textarea id="updateSongLyrics" type="text" name="lyrics" defaultValue={props.lyrics}/>
+                <input type="hidden" name="_id" value={props._id}/>
+                <input type="hidden" name="_csrf" value={props.csrf}/>
+                <input className="formSubmit" type="submit" value="Update Song" />
+            </form>
+        );
+    }
+    return null;
+};
+
+
 const updateSong = (e) => {
     e.preventDefault();
 
-    $("songMessage").animate({width:'hide'},350);
+    $("#errorMessage").fadeOut()
 
     if($("#updateSongName").val() == '' || $("#updateSongLyrics").val() == '') {
-        handleError("All field are required");
+        handleError("All fields are required");
         return false;
     }
 
@@ -124,32 +152,6 @@ const InsertChord = () => {
     }
 }
 
-// song update form
-const UpdateSongForm = (props) => {
-    if (props.visible) {
-        return (
-            <form id="updateSong" 
-                  name="updateSong"
-                  onSubmit={updateSong}
-                  action="/updateSong"
-                  method="POST"
-                  className="songForm"
-            >
-                <img src="/assets/img/songIcon.jpeg" alt="exit" className="exitButton" onClick={() => setCreateSongVisible(false)} />
-                <label htmlFor="name">Name: </label>
-                <input id="updateSongName" type="text" name="name" defaultValue={props.name}/>
-                <label htmlFor="lyrics">Lyrics: </label>
-                <button type="button" onClick={InsertChord}>InsertChord</button>
-                <textarea id="updateSongLyrics" type="text" name="lyrics" defaultValue={props.lyrics}/>
-                <input type="hidden" name="_id" value={props._id}/>
-                <input type="hidden" name="_csrf" value={props.csrf}/>
-                <input className="makeSongSubmit" type="submit" value="Update Song" />
-            </form>
-        );
-    }
-    return null;
-};
-
 const DropdownMenu = (props) => {
     const [visible, setVisible] = React.useState(false);
     const showMenu = () => {
@@ -168,7 +170,7 @@ const DropdownMenu = (props) => {
             { visible && 
                 <div className="dropdownContent">
                     <a href="#" onClick={() => {setUpdateSongVisible(true, props.song); return false;}}>Edit</a>
-                    <a href="#" onClick={() => {setConfirmDeleteVisible(true, props.song._id); return false;}}>Delete</a>
+                    <a href="#" onClick={() => {setConfirmDeleteVisible(true, props.song); return false;}}>Delete</a>
                 </div>
             }
         </div>
@@ -189,21 +191,29 @@ const SongList = function(props) {
             setOpenSongVisible(true);
             setOpenSongName(song.name);
             setOpenSongLyrics(song.lyrics);
+            $("#overlay").fadeIn();
             document.addEventListener('click', closeSongView);
         }
     }
 
-    const closeSongView = () => {
-        setOpenSongVisible(false);
-        document.removeEventListener('click', closeSongView);
+    const closeSongView = (e) => {
+        if (e.target.id === "overlay" || e.target.className === "exitButton")
+        {
+            setOpenSongVisible(false);
+            $("#overlay").fadeOut();
+            document.removeEventListener('click', closeSongView);
+        }
     }
 
     const songNodes = props.songs.map(function(song) {
         return (
             <div key={song._id} className="song" onClick={(e) => setupSongView(e, song)}>
-                <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon"/>
+                <img src="/assets/img/songIcon.png" alt="song icon" className="songIcon"/>
                 <DropdownMenu song={song}/>
-                <h3 className="songName">Name {song.name} </h3>
+                <h3>‎‎ ‎</h3>
+                <div className="songName">
+                    <h3>{song.name} </h3>
+                </div>
             </div>
         );
     });
@@ -212,8 +222,7 @@ const SongList = function(props) {
         <div className="songList">
             {openSongVisible && <SongView name={openSongName} lyrics={openSongLyrics}/>}
             <div className="song" onClick={() => setCreateSongVisible(true)}>
-                <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon" />
-                <h3 className="songName">+</h3>
+                <h3 className="addSong">+</h3>
             </div>
             {songNodes}
         </div>
@@ -221,15 +230,16 @@ const SongList = function(props) {
 };
 
 const parseChords = () => {
-    debugger;
     let lyrics = document.querySelector("#lyrics");
     let chords = lyrics.innerHTML.match(/(?<=\[).+?(?=\])/g);
-    let temp = lyrics.innerHTML;
-    for (let i = 0; i < chords.length; i++) {
-        temp = temp.replace(chords[i], `<div class="chordParent"><div class="chordParent">${chords[i]}</div></div>`);
+    if (chords) {
+        let temp = lyrics.innerHTML;
+        for (let i = 0; i < chords.length; i++) {
+            temp = temp.replace(/\[(.*?)\]/, `<div class="chordParent"><div class="chordChild">${chords[i]}</div></div>`);
+        }
+        let cleanup = temp.replace(/[\^]+/g, "");
+        lyrics.innerHTML = cleanup;
     }
-    let cleanup = temp.replace(/[\[\]^]+/g, "");
-    lyrics.innerHTML = cleanup;
 }
 
 const SongView = (props) => {
@@ -242,10 +252,11 @@ const SongView = (props) => {
         }
     })
     return (
-        <div className="songForm">
-            {props.name} <p> </p>
+        <div className="songView">
+            <img src="/assets/img/exit.png" alt="exit" className="exitButton"/>
+            <h1>"{props.name}"</h1>
             <div id="lyrics">
-                {props.lyrics}
+                <p>{props.lyrics}</p>
             </div>
         </div>
     )
@@ -253,7 +264,9 @@ const SongView = (props) => {
 
 // toggle song creation form
 const setCreateSongVisible = (visible) => {
+    $("#errorMessage").fadeOut()
     if (visible) {
+        $("#overlay").fadeIn();
         sendAjax('GET', '/getToken', null, (result) => {
             ReactDOM.render(
                 <CreateSongForm csrf={result.csrfToken} visible={true}/>, document.querySelector("#makeSong")
@@ -261,6 +274,7 @@ const setCreateSongVisible = (visible) => {
         });
     }
     else {
+        $("#overlay").fadeOut();
         ReactDOM.render(
             <CreateSongForm visible={false}/>, document.querySelector("#makeSong")
         );            
@@ -268,7 +282,9 @@ const setCreateSongVisible = (visible) => {
 }
 // toggle song update form
 const setUpdateSongVisible = (visible, song) => {
+    $("#errorMessage").fadeOut()
     if (visible) {
+        $("#overlay").fadeIn();
         sendAjax('GET', '/getToken', null, (result) => {
             ReactDOM.render(
                 <UpdateSongForm _id={song._id} name={song.name} lyrics={song.lyrics} csrf={result.csrfToken} visible={true}/>, document.querySelector("#makeSong")
@@ -276,6 +292,7 @@ const setUpdateSongVisible = (visible, song) => {
         });
     }
     else {
+        $("#overlay").fadeOut();
         ReactDOM.render(
             <UpdateSongForm visible={false}/>, document.querySelector("#makeSong")
         );            

@@ -15,12 +15,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 // validate song and push to db
 var createSong = function createSong(e) {
   e.preventDefault();
-  $("songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
 
   if ($("#songName").val() == '' || $("#songLyrics").val() == '') {
-    handleError("All field are required");
+    handleError("All fields are required");
     return false;
   }
 
@@ -32,16 +30,18 @@ var createSong = function createSong(e) {
 }; // toggle confirm deletion window
 
 
-var setConfirmDeleteVisible = function setConfirmDeleteVisible(visible, _id) {
+var setConfirmDeleteVisible = function setConfirmDeleteVisible(visible, song) {
   if (visible) {
+    $("#overlay").fadeIn();
     sendAjax('GET', '/getToken', null, function (result) {
       ReactDOM.render( /*#__PURE__*/React.createElement(ConfirmDelete, {
         visible: true,
-        _id: _id,
+        song: song,
         csrf: result.csrfToken
       }), document.querySelector("#makeSong"));
     });
   } else {
+    $("#overlay").fadeOut();
     ReactDOM.render( /*#__PURE__*/React.createElement(ConfirmDelete, {
       visible: false
     }), document.querySelector("#makeSong"));
@@ -58,18 +58,25 @@ var ConfirmDelete = function ConfirmDelete(props) {
       action: "/deleteSong",
       method: "POST",
       className: "confirmDelete"
-    }, /*#__PURE__*/React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("img", {
+      src: "/assets/img/exit.png",
+      alt: "exit",
+      className: "exitButton",
+      onClick: function onClick() {
+        return setConfirmDeleteVisible(false);
+      }
+    }), /*#__PURE__*/React.createElement("h1", null, "Delete \"", props.song.name, "\"?"), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_id",
-      value: props._id
+      value: props.song._id
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
-      className: "confirmDeleteSubmit",
+      className: "formSubmit",
       type: "submit",
-      value: "Delete Song"
+      value: "Confirm"
     }));
   }
 
@@ -96,22 +103,23 @@ var CreateSongForm = function CreateSongForm(props) {
       method: "POST",
       className: "songForm"
     }, /*#__PURE__*/React.createElement("img", {
-      src: "/assets/img/songIcon.jpeg",
+      src: "/assets/img/exit.png",
       alt: "exit",
       className: "exitButton",
       onClick: function onClick() {
         return setCreateSongVisible(false);
       }
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "name"
-    }, "Name: "), /*#__PURE__*/React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("input", {
       id: "songName",
+      className: "songNameInput",
       type: "text",
       name: "name",
       placeholder: "Song Name"
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "lyrics"
-    }, "Lyrics: "), /*#__PURE__*/React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "tool",
+      type: "button",
+      onClick: InsertChord
+    }, "InsertChord"), /*#__PURE__*/React.createElement("textarea", {
       id: "songLyrics",
       type: "text",
       name: "lyrics",
@@ -121,9 +129,59 @@ var CreateSongForm = function CreateSongForm(props) {
       name: "_csrf",
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
-      className: "makeSongSubmit",
+      className: "formSubmit",
       type: "submit",
       value: "Make Song"
+    }));
+  }
+
+  return null;
+}; // song update form
+
+
+var UpdateSongForm = function UpdateSongForm(props) {
+  if (props.visible) {
+    return /*#__PURE__*/React.createElement("form", {
+      id: "updateSong",
+      name: "updateSong",
+      onSubmit: updateSong,
+      action: "/updateSong",
+      method: "POST",
+      className: "songForm"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: "/assets/img/exit.png",
+      alt: "exit",
+      className: "exitButton",
+      onClick: function onClick() {
+        return setUpdateSongVisible(false);
+      }
+    }), /*#__PURE__*/React.createElement("input", {
+      id: "updateSongName",
+      className: "songNameInput",
+      type: "text",
+      name: "name",
+      defaultValue: props.name
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "tool",
+      type: "button",
+      onClick: InsertChord
+    }, "InsertChord"), /*#__PURE__*/React.createElement("textarea", {
+      id: "updateSongLyrics",
+      type: "text",
+      name: "lyrics",
+      defaultValue: props.lyrics
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_id",
+      value: props._id
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "formSubmit",
+      type: "submit",
+      value: "Update Song"
     }));
   }
 
@@ -132,12 +190,10 @@ var CreateSongForm = function CreateSongForm(props) {
 
 var updateSong = function updateSong(e) {
   e.preventDefault();
-  $("songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
 
   if ($("#updateSongName").val() == '' || $("#updateSongLyrics").val() == '') {
-    handleError("All field are required");
+    handleError("All fields are required");
     return false;
   }
 
@@ -163,58 +219,6 @@ var InsertChord = function InsertChord() {
     textarea.selectionStart = pos;
     textarea.selectionEnd = pos + searchText.length;
   }
-}; // song update form
-
-
-var UpdateSongForm = function UpdateSongForm(props) {
-  if (props.visible) {
-    return /*#__PURE__*/React.createElement("form", {
-      id: "updateSong",
-      name: "updateSong",
-      onSubmit: updateSong,
-      action: "/updateSong",
-      method: "POST",
-      className: "songForm"
-    }, /*#__PURE__*/React.createElement("img", {
-      src: "/assets/img/songIcon.jpeg",
-      alt: "exit",
-      className: "exitButton",
-      onClick: function onClick() {
-        return setCreateSongVisible(false);
-      }
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "name"
-    }, "Name: "), /*#__PURE__*/React.createElement("input", {
-      id: "updateSongName",
-      type: "text",
-      name: "name",
-      defaultValue: props.name
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "lyrics"
-    }, "Lyrics: "), /*#__PURE__*/React.createElement("button", {
-      type: "button",
-      onClick: InsertChord
-    }, "InsertChord"), /*#__PURE__*/React.createElement("textarea", {
-      id: "updateSongLyrics",
-      type: "text",
-      name: "lyrics",
-      defaultValue: props.lyrics
-    }), /*#__PURE__*/React.createElement("input", {
-      type: "hidden",
-      name: "_id",
-      value: props._id
-    }), /*#__PURE__*/React.createElement("input", {
-      type: "hidden",
-      name: "_csrf",
-      value: props.csrf
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "makeSongSubmit",
-      type: "submit",
-      value: "Update Song"
-    }));
-  }
-
-  return null;
 };
 
 var DropdownMenu = function DropdownMenu(props) {
@@ -247,7 +251,7 @@ var DropdownMenu = function DropdownMenu(props) {
   }, "Edit"), /*#__PURE__*/React.createElement("a", {
     href: "#",
     onClick: function onClick() {
-      setConfirmDeleteVisible(true, props.song._id);
+      setConfirmDeleteVisible(true, props.song);
       return false;
     }
   }, "Delete")));
@@ -276,13 +280,17 @@ var SongList = function SongList(props) {
       setOpenSongVisible(true);
       setOpenSongName(song.name);
       setOpenSongLyrics(song.lyrics);
+      $("#overlay").fadeIn();
       document.addEventListener('click', closeSongView);
     }
   };
 
-  var closeSongView = function closeSongView() {
-    setOpenSongVisible(false);
-    document.removeEventListener('click', closeSongView);
+  var closeSongView = function closeSongView(e) {
+    if (e.target.id === "overlay" || e.target.className === "exitButton") {
+      setOpenSongVisible(false);
+      $("#overlay").fadeOut();
+      document.removeEventListener('click', closeSongView);
+    }
   };
 
   var songNodes = props.songs.map(function (song) {
@@ -293,14 +301,14 @@ var SongList = function SongList(props) {
         return setupSongView(e, song);
       }
     }, /*#__PURE__*/React.createElement("img", {
-      src: "/assets/img/songIcon.jpeg",
+      src: "/assets/img/songIcon.png",
       alt: "song icon",
       className: "songIcon"
     }), /*#__PURE__*/React.createElement(DropdownMenu, {
       song: song
-    }), /*#__PURE__*/React.createElement("h3", {
+    }), /*#__PURE__*/React.createElement("h3", null, "\u200E\u200E \u200E"), /*#__PURE__*/React.createElement("div", {
       className: "songName"
-    }, "Name ", song.name, " "));
+    }, /*#__PURE__*/React.createElement("h3", null, song.name, " ")));
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "songList"
@@ -312,27 +320,25 @@ var SongList = function SongList(props) {
     onClick: function onClick() {
       return setCreateSongVisible(true);
     }
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "/assets/img/songIcon.jpeg",
-    alt: "song icon",
-    className: "songIcon"
-  }), /*#__PURE__*/React.createElement("h3", {
-    className: "songName"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "addSong"
   }, "+")), songNodes);
 };
 
 var parseChords = function parseChords() {
-  debugger;
   var lyrics = document.querySelector("#lyrics");
   var chords = lyrics.innerHTML.match(/(?<=\[).+?(?=\])/g);
-  var temp = lyrics.innerHTML;
 
-  for (var i = 0; i < chords.length; i++) {
-    temp = temp.replace(chords[i], "<div class=\"chordParent\"><div class=\"chordParent\">".concat(chords[i], "</div></div>"));
+  if (chords) {
+    var temp = lyrics.innerHTML;
+
+    for (var i = 0; i < chords.length; i++) {
+      temp = temp.replace(/\[(.*?)\]/, "<div class=\"chordParent\"><div class=\"chordChild\">".concat(chords[i], "</div></div>"));
+    }
+
+    var cleanup = temp.replace(/[\^]+/g, "");
+    lyrics.innerHTML = cleanup;
   }
-
-  var cleanup = temp.replace(/[\[\]^]+/g, "");
-  lyrics.innerHTML = cleanup;
 };
 
 var SongView = function SongView(props) {
@@ -345,15 +351,22 @@ var SongView = function SongView(props) {
     };
   });
   return /*#__PURE__*/React.createElement("div", {
-    className: "songForm"
-  }, props.name, " ", /*#__PURE__*/React.createElement("p", null, " "), /*#__PURE__*/React.createElement("div", {
+    className: "songView"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "/assets/img/exit.png",
+    alt: "exit",
+    className: "exitButton"
+  }), /*#__PURE__*/React.createElement("h1", null, "\"", props.name, "\""), /*#__PURE__*/React.createElement("div", {
     id: "lyrics"
-  }, props.lyrics));
+  }, /*#__PURE__*/React.createElement("p", null, props.lyrics)));
 }; // toggle song creation form
 
 
 var setCreateSongVisible = function setCreateSongVisible(visible) {
+  $("#errorMessage").fadeOut();
+
   if (visible) {
+    $("#overlay").fadeIn();
     sendAjax('GET', '/getToken', null, function (result) {
       ReactDOM.render( /*#__PURE__*/React.createElement(CreateSongForm, {
         csrf: result.csrfToken,
@@ -361,6 +374,7 @@ var setCreateSongVisible = function setCreateSongVisible(visible) {
       }), document.querySelector("#makeSong"));
     });
   } else {
+    $("#overlay").fadeOut();
     ReactDOM.render( /*#__PURE__*/React.createElement(CreateSongForm, {
       visible: false
     }), document.querySelector("#makeSong"));
@@ -369,7 +383,10 @@ var setCreateSongVisible = function setCreateSongVisible(visible) {
 
 
 var setUpdateSongVisible = function setUpdateSongVisible(visible, song) {
+  $("#errorMessage").fadeOut();
+
   if (visible) {
+    $("#overlay").fadeIn();
     sendAjax('GET', '/getToken', null, function (result) {
       ReactDOM.render( /*#__PURE__*/React.createElement(UpdateSongForm, {
         _id: song._id,
@@ -380,6 +397,7 @@ var setUpdateSongVisible = function setUpdateSongVisible(visible, song) {
       }), document.querySelector("#makeSong"));
     });
   } else {
+    $("#overlay").fadeOut();
     ReactDOM.render( /*#__PURE__*/React.createElement(UpdateSongForm, {
       visible: false
     }), document.querySelector("#makeSong"));
@@ -403,16 +421,12 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#songMessage").animate({
-    width: 'toggle'
-  }, 350);
+  $("#message").text(message);
+  $("#errorMessage").fadeIn();
 };
 
 var redirect = function redirect(response) {
-  $("#songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
   window.location = response.redirect;
 };
 

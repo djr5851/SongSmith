@@ -1,7 +1,7 @@
 const handleLogin = (e) => {
     e.preventDefault();
 
-    $("#songMessage").animate({width:'hide'},350);
+    $("#errorMessage").fadeOut()
 
     if($("#user").val() == '' || $("#pass").val() == '') {
         handleError("Username or password is empty");
@@ -18,7 +18,7 @@ const handleLogin = (e) => {
 const handleSignup = (e) => {
     e.preventDefault();
 
-    $("#songMessage").animate({width:'hide'},350);
+    $("#errorMessage").fadeOut();
 
     if($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
         handleError("All fields are required");
@@ -37,24 +37,29 @@ const handleSignup = (e) => {
 
 const LoginWindow = (props) => {
     return (
-        <form id="loginForm" name="loginForm"
-              onSubmit={handleLogin}
-              action="/login"
-              method="POST"
-              className="mainForm"
-        >
-            <label htmlFor="username">Username: </label>
-            <input id="user" type="text" name="username" placeholder="username"/>
-            <label htmlFor="pass">Password: </label>
-            <input id="pass" type="password" name="pass" placeholder="password"/>
-            <input type="hidden" name="_csrf" value={props.csrf}/>
-            <input className="formSubmit" type="submit" value="Sign in" />
-        </form>
+        <div id="loginBox">
+            <form id="loginForm" name="loginForm"
+                onSubmit={handleLogin}
+                action="/login"
+                method="POST"
+                className="mainForm"
+            >
+                {/* <label htmlFor="username">Username: </label> */}
+                <h1>Songsmith</h1>
+                <input id="user" className="accountInput" type="text" name="username" placeholder="Username"/>
+                {/* <label htmlFor="pass">Password: </label> */}
+                <input id="pass" className="accountInput" type="password" name="pass" placeholder="Password"/>
+                <input type="hidden" name="_csrf" value={props.csrf}/>
+                <input className="formSubmit" type="submit" value="Sign in" />
+                <p>Don’t have an account? <a id="signupLink" href="/signup">Sign up</a></p>
+            </form>
+        </div>
     );
 };
 
 const SignupWindow = (props) => {
     return (
+        <div id="loginBox">
         <form id="signupForm" 
               name="signupForm"
               onSubmit={handleSignup}
@@ -62,29 +67,45 @@ const SignupWindow = (props) => {
               method="POST"
               className="mainForm"
         >
-            <label htmlFor="username">Username: </label>
-            <input id="user" type="text" name="username" placeholder="username"/>
-            <label htmlFor="pass">Password: </label>
-            <input id="pass" type="password" name="pass" placeholder="password"/>
-            <label htmlFor="pass2">Password: </label>
-            <input id="pass2" type="password" name="pass2" placeholder="retype password"/>
-            <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="formSubmit" type="submit" value="Sign Up" />
+            <h1>Create Account</h1>
+            <input id="user" className="accountInput" type="text" name="username" placeholder="Username"/>
+            <input id="pass" className="accountInput" type="password" name="pass" placeholder="Password"/>
+            <input id="pass2" className="accountInput" type="password" name="pass2" placeholder="Retype password"/>
+            <input type="hidden" name="_csrf" value={props.csrf}/>
+            <input className="formSubmit" type="submit" value="Sign up" />
+            <p>Already have an account? <a id="signinLink" href="/signup">Sign in</a></p>
         </form>
+    </div>
     );
 };
 
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
-        document.querySelector("#content")
+        document.querySelector("#content"),
+        () => {
+            const signupLink = document.querySelector("#signupLink");
+            signupLink.addEventListener("click", (e) => {
+                e.preventDefault();
+                createSignupWindow(csrf);
+                return false;
+            });
+        }
     );
 };
 
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
         <SignupWindow csrf={csrf} />,
-        document.querySelector("#content")
+        document.querySelector("#content"),
+        () => {
+            const signinLink = document.querySelector("#signinLink");
+            signinLink.addEventListener("click", (e) => {
+                e.preventDefault();
+                createLoginWindow(csrf);
+                return false;
+            });
+        }
     );
 };
 

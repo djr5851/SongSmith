@@ -8,7 +8,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
   <link rel="shortcut icon" href="/assets/img/favicon.png"/>
-  <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">  <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
 </head>
 <body> 
   <nav><a href="/login"><img id="logo" src="/assets/img/logo.png" alt="logo"/></a>
@@ -16,8 +17,8 @@
     <div class="navlink"><a id="signupButton" href="/signup">Sign up</a></div>
   </nav>
   <section id="content"></section>
-  <div id="songMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
-    <h3><span id="errorMessage">Wrong username or password</span></h3><img id="song" src="assets/img/error.png" alt="song"/>
+  <div id="errorMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
+    <h3><span id="message"></span></h3>
   </div>
   <script src="/assets/loginBundle.js"></script>
 </body>

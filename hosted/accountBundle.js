@@ -2,9 +2,7 @@
 
 var updateAccount = function updateAccount(e) {
   e.preventDefault();
-  $("#songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
 
   if ($("#currentUser").val() == '' || $("#currentPass").val() == '' || $("#newPass").val() == '' || $("#newPass2").val() == '') {
     handleError("All fields are required");
@@ -23,28 +21,32 @@ var updateAccount = function updateAccount(e) {
 
 
 var AccountForm = function AccountForm(props) {
-  return /*#__PURE__*/React.createElement("form", {
+  return /*#__PURE__*/React.createElement("div", {
+    id: "loginBox"
+  }, /*#__PURE__*/React.createElement("form", {
     id: "accountForm",
     name: "account",
     onSubmit: updateAccount,
     action: "/account",
-    method: "POST",
-    className: "songForm"
+    method: "POST"
   }, /*#__PURE__*/React.createElement("h1", {
     id: "username"
   }, props.username), /*#__PURE__*/React.createElement("input", {
     id: "currentPass",
-    type: "text",
+    className: "accountInput",
+    type: "password",
     name: "currentPass",
     placeholder: "Current Password"
   }), /*#__PURE__*/React.createElement("input", {
     id: "newPass",
-    type: "text",
+    className: "accountInput",
+    type: "password",
     name: "newPass",
     placeholder: "New Password"
   }), /*#__PURE__*/React.createElement("input", {
     id: "newPass2",
-    type: "text",
+    className: "accountInput",
+    type: "password",
     name: "newPass2",
     placeholder: "Confirm New Password"
   }), /*#__PURE__*/React.createElement("input", {
@@ -52,10 +54,10 @@ var AccountForm = function AccountForm(props) {
     name: "_csrf",
     value: props.csrf
   }), /*#__PURE__*/React.createElement("input", {
-    className: "makeSongSubmit",
+    className: "formSubmit",
     type: "submit",
     value: "Save"
-  }));
+  })));
 };
 
 var createAccountForm = function createAccountForm(csrf, username) {
@@ -83,16 +85,12 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#songMessage").animate({
-    width: 'toggle'
-  }, 350);
+  $("#message").text(message);
+  $("#errorMessage").fadeIn();
 };
 
 var redirect = function redirect(response) {
-  $("#songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
   window.location = response.redirect;
 };
 

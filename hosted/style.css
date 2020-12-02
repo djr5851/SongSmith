@@ -4,6 +4,8 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    background-color: #f2f2f2;
+    font-family: 'Poppins';
 }
 
 #logo {
@@ -47,8 +49,22 @@ nav:nth-child(1) {
     background-color: #66bdff;
 }
 
+.songView {
+    width: 40em;
+    left: 0;
+    right: 0;
+    top: 10em;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    z-index: 400;
+}
+
 .songForm {
-    border: 2px solid #338acc;
+    border: 2px solid #ffffff;
     height: 40em;
     width: 40em;
     left: 0;
@@ -56,57 +72,54 @@ nav:nth-child(1) {
     top: 10em;
     margin-left: auto;
     margin-right: auto;
-    background-color: #55acee;
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     position: absolute;
+    z-index: 400;
 }
 
-.songForm label {
-    display: inline-block;
-    width: 75px;
-    margin-left: 10px;
-    font-size: 1.2em;
-    float: left;
-    color: white;
+.tool {
+    position: absolute;
+    height: 55px;
+    width: 51px;
+    overflow-wrap: break-word;
+    left: 6px;
+    border: none;
+    border-radius: 10px;
+    background-color: #d0d0d0;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
-.songForm input[type=text] {
-    float:left;
+tool:hover {
+    background-color: #ee0000;
 }
-
-.makeSongSubmit {
-    transition: background-color 0.4s ease;
-    display: inline;
-    width: 90px;
-    background-color: #55acee;
-    border-radius: 2px;
-    color: white;
-    text-decoration: none;
-}
-
-.makeSongSubmit:link, .makeSongSubmit:visited, .makeSongSubmit:hover, .makeSongSubmit:active {
-    color: white;
-}
-
-.makeSongSubmit:hover {
-    transition: background-color 0.4s ease;
-    background-color: #338acc;
+.songNameInput {
+    display: block;
+    margin: 0 auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 1.5em;
+    width: 260px;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid #adadad;
 }
 
 .confirmDelete {
-    border: 2px solid #338acc;
-    height: 40em;
     width: 40em;
+    height: 13em;
     left: 0;
     right: 0;
     top: 10em;
     margin-left: auto;
     margin-right: auto;
-    background-color: #55acee;
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     position: absolute;
+    z-index: 400;
 }
 
 .confirmDelete label {
@@ -141,21 +154,28 @@ nav:nth-child(1) {
     height: 300px;
     width: 350px;
     margin: 0 auto;
-    padding-top: 350px;
     font-size: 1.2em;
+    padding-top: 80px;
 }
 
 .mainForm h3 {
     text-align: center;
 }
 
-.mainForm label {
-    display: inline-block;
-    width: 100px;
-    margin-right: 10px;
-    text-align: right;
-    font-size: 1.2em;
+.mainForm p {
+    padding: 10px;
+    font-size: 15px;
+    text-align: center;
+    color: rgb(150, 150, 150);
+
 }
+
+h1 {
+    font-size: 40px;
+    text-align: center;
+    font-family: 'Poppins-Bold', sans-serif;
+}
+
 
 .formSubmit {
     transition: background-color 0.4s ease;
@@ -182,32 +202,77 @@ nav:nth-child(1) {
     background-color: #338acc;
 }
 
-#user, #pass, #pass2 {
-    text-align: center;
+.formSubmit {
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.2;
+    text-transform: uppercase;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    width: 60%;
+    height: 50px;
+    background-image: linear-gradient(to right, #ff1a75, #ff3333);    border: none;
+    border-radius: 20px;
+}
+
+.accountInput {
+    display: block;
+    margin: 0 auto;
+    margin-top: 60px;
+    text-align: left;
     font-size: 1.1em;
-    width: 180px;
-    border-radius: 6px;
-}
-
-#user:focus, #pass:focus, #pass2:focus {
+    width: 260px;
     outline: none;
-    box-shadow: 0px 0px 1px 1px #55acee;
+    border: none;
+    border-bottom: 2px solid #adadad;
 }
 
-#songMessage {
+#loginBox {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    width: 390px;
+    height: 600px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+#loginBox input {
+    display: block;
+    margin: 0 auto;
+    margin-top: 60px;
+}
+
+#loginForm {
+    width: 400;
+    height: 50px;
+    margin: 0 auto;
+    align-content: center;
+}
+
+#accountForm {
+    /* margin-top: 50px; */
+}
+
+
+#errorMessage {
     display:none;
-    top: 250px;
     width: 250px;
-    height: 650px;
+    height: 120px;
     position: absolute;
-    z-index: 200;
-    right: 0px;
-    overflow: hidden;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto;
+    top: 50px;
+    z-index: 400;
 }
 
-#songMessage h3 {
+#errorMessage h3 {
     width: 200px;
     position: absolute;
+    font-weight: 100;
     top: 0px;
     left: 20px;
 }
@@ -218,44 +283,26 @@ nav:nth-child(1) {
     z-index:300;
 }
 
-#errorMessage {
+#error {
     font-size: 1.2em;
     font-weight: bold;
     color: red;
     font-style: italic;
 }
 
-#song {
-    z-index: 225;
-    margin-top: -20px;
-    margin-left: 135px;
-    height: 450px;
-    width: 300px;
-    -ms-transform: rotate(330deg);
-    -webkit-transform: rotate(330deg); 
-    transform: rotate(330deg);
-}
-
-#song {
-    width: 40%;
-    min-width: 400px;
-    border: 2px solid #55acee;
-    border-radius: 4px;
-    margin: 0 auto;
-    margin-top: 100px;
-}
-
 .song {
     width: 70%;
     margin: 0 auto;
-    margin-top: 2px;
+    margin-top: 20px;
     margin-bottom: 2px;
-    border: 2px solid #55acee;
-    border-radius: 4px;
-    background-color: #55acee;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     padding: 10px;
-    min-height:60px;
+    height:200px;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .songList {
@@ -265,11 +312,19 @@ nav:nth-child(1) {
     grid-gap: 1rem;
 }
 
+#overlay {
+    display: none;
+    background-color:rgba(0, 0, 0, 0.5);
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:300;
+}
 .song:hover {
-    transition: border-color 0.2s ease-out;
-    border-color: rgba(255,255,255, 0.8);
-    transition: background-color 2.6s ease-out;
-    background-color: #66bfff;
+    transition: background-color 0.2s ease-out;
+    background-color: #f7f7f7;
 }
 
 img.songIcon {
@@ -283,14 +338,11 @@ img.songIcon {
 }
 
 img.exitButton {
-    margin-left: 25px;
-    margin-right: 10px;
     height: 50px;
     width: 50px;
-    border-radius: 4px;
-    margin-top:10px;
-    float:right;
-}
+    position: absolute;
+    right: 10px;
+    top: 10px;}
 
 h3.emptySong {
     width: 400px;
@@ -300,12 +352,21 @@ h3.emptySong {
     margin-top: 18px;
 }
 
-h3.songName {
-    float:left;
-    width: 200px;
+.songName {
     font-weight: bold;
-    padding-left: 65px;
-    font-size: 1.5em;
+    font-size: 1.3em;
+    text-align: center;
+    margin-top: 70px;
+}
+
+.addSong {
+    text-align: center;
+    font-size: 50pt;
+    font-weight: 100;
+    height: 50px;
+    width: 50px;
+    margin: 0 auto;
+    margin-top: 50px;
 }
 
 h3.songLyrics {
@@ -315,14 +376,6 @@ h3.songLyrics {
     font-weight: bold;
     padding-right: 40px;
     font-size: 1.5em;
-}
-
-.song:first-child {
-    margin-top: 10px;
-}
-
-.song:last-child {
-    margin-bottom:10px;
 }
 
 .test:after {
@@ -342,7 +395,7 @@ h3.songLyrics {
 
 .dropdownContent {
     /* display: none; */
-    position: relative;
+    position: absolute;
     margin-top: 60px;
     background-color: #f9f9f9;
     min-width: 160px;
@@ -358,7 +411,7 @@ h3.songLyrics {
     display: block;
 }
 
-.dropdown a:hover {background-color: #f1f1f1}
+.dropdownContent a:hover {background-color: #f1f1f1}
 
 .chordParent {
     position: relative;
@@ -366,13 +419,23 @@ h3.songLyrics {
 }
 
 .chordChild {
-    position: relative;
-    bottom: 1em;
+    position: absolute;
+    display: inline;
+    bottom: 0.5em;
 }
 
-#updateSongLyrics {
+textArea {
     width: 500px;
-    height: 200px;
+    height: 450px;
+    line-height: 2;
+    margin: 0 auto;
+    display: block;
+}
+
+#lyrics {
+    white-space: pre-line;
+    line-height: 2;
+    padding-left: 30px;
 }
 
 @media (min-width: 600px) {

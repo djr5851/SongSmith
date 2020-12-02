@@ -1,7 +1,7 @@
 const updateAccount = (e) => {
     e.preventDefault();
 
-    $("#songMessage").animate({width:'hide'},350);
+    $("#errorMessage").fadeOut();
 
     if($("#currentUser").val() == '' || $("#currentPass").val() == '' || $("#newPass").val() == '' || $("#newPass2").val() == '') {
         handleError("All fields are required");
@@ -24,25 +24,21 @@ const updateAccount = (e) => {
 // account edit form
 const AccountForm = (props) => {
     return (
-        <form id="accountForm" 
-                name="account"
-                onSubmit={updateAccount}
-                action="/account"
-                method="POST"
-                className="songForm"
-        >
-            <h1 id="username">{props.username}</h1>
-            {/* <label htmlFor="userLabel">Username: </label> */}
-            {/* <input id="currentUser" type="text" name="currentUser" defaultValue={props.username}/> */}
-            {/* <label htmlFor="currentPassLabel">Current Password: </label> */}
-            <input id="currentPass" type="text" name="currentPass" placeholder="Current Password"/>
-            {/* <label htmlFor="newPassLabel">New Password: </label> */}
-            <input id="newPass" type="text" name="newPass" placeholder="New Password"/>
-            {/* <label htmlFor="newPass2Label">Confirm New Password: </label> */}
-            <input id="newPass2" type="text" name="newPass2" placeholder="Confirm New Password"/>
-            <input type="hidden" name="_csrf" value={props.csrf}/>
-            <input className="makeSongSubmit" type="submit" value="Save" />
-        </form>
+        <div id="loginBox">
+            <form id="accountForm" 
+                    name="account"
+                    onSubmit={updateAccount}
+                    action="/account"
+                    method="POST"
+            >
+                <h1 id="username">{props.username}</h1>
+                <input id="currentPass" className="accountInput" type="password" name="currentPass" placeholder="Current Password"/>
+                <input id="newPass" className="accountInput" type="password" name="newPass" placeholder="New Password"/>
+                <input id="newPass2" className="accountInput" type="password" name="newPass2" placeholder="Confirm New Password"/>
+                <input type="hidden" name="_csrf" value={props.csrf}/>
+                <input className="formSubmit" type="submit" value="Save" />
+            </form>
+        </div>
     );
 };
 

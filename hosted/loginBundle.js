@@ -2,9 +2,7 @@
 
 var handleLogin = function handleLogin(e) {
   e.preventDefault();
-  $("#songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
 
   if ($("#user").val() == '' || $("#pass").val() == '') {
     handleError("Username or password is empty");
@@ -18,9 +16,7 @@ var handleLogin = function handleLogin(e) {
 
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
-  $("#songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
 
   if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
     handleError("All fields are required");
@@ -37,27 +33,27 @@ var handleSignup = function handleSignup(e) {
 };
 
 var LoginWindow = function LoginWindow(props) {
-  return /*#__PURE__*/React.createElement("form", {
+  return /*#__PURE__*/React.createElement("div", {
+    id: "loginBox"
+  }, /*#__PURE__*/React.createElement("form", {
     id: "loginForm",
     name: "loginForm",
     onSubmit: handleLogin,
     action: "/login",
     method: "POST",
     className: "mainForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "username"
-  }, "Username: "), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("h1", null, "Songsmith"), /*#__PURE__*/React.createElement("input", {
     id: "user",
+    className: "accountInput",
     type: "text",
     name: "username",
-    placeholder: "username"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "pass"
-  }, "Password: "), /*#__PURE__*/React.createElement("input", {
+    placeholder: "Username"
+  }), /*#__PURE__*/React.createElement("input", {
     id: "pass",
+    className: "accountInput",
     type: "password",
     name: "pass",
-    placeholder: "password"
+    placeholder: "Password"
   }), /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "_csrf",
@@ -66,38 +62,40 @@ var LoginWindow = function LoginWindow(props) {
     className: "formSubmit",
     type: "submit",
     value: "Sign in"
-  }));
+  }), /*#__PURE__*/React.createElement("p", null, "Don\u2019t have an account? ", /*#__PURE__*/React.createElement("a", {
+    id: "signupLink",
+    href: "/signup"
+  }, "Sign up"))));
 };
 
 var SignupWindow = function SignupWindow(props) {
-  return /*#__PURE__*/React.createElement("form", {
+  return /*#__PURE__*/React.createElement("div", {
+    id: "loginBox"
+  }, /*#__PURE__*/React.createElement("form", {
     id: "signupForm",
     name: "signupForm",
     onSubmit: handleSignup,
     action: "/signup",
     method: "POST",
     className: "mainForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "username"
-  }, "Username: "), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("h1", null, "Create Account"), /*#__PURE__*/React.createElement("input", {
     id: "user",
+    className: "accountInput",
     type: "text",
     name: "username",
-    placeholder: "username"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "pass"
-  }, "Password: "), /*#__PURE__*/React.createElement("input", {
+    placeholder: "Username"
+  }), /*#__PURE__*/React.createElement("input", {
     id: "pass",
+    className: "accountInput",
     type: "password",
     name: "pass",
-    placeholder: "password"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "pass2"
-  }, "Password: "), /*#__PURE__*/React.createElement("input", {
+    placeholder: "Password"
+  }), /*#__PURE__*/React.createElement("input", {
     id: "pass2",
+    className: "accountInput",
     type: "password",
     name: "pass2",
-    placeholder: "retype password"
+    placeholder: "Retype password"
   }), /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "_csrf",
@@ -105,20 +103,37 @@ var SignupWindow = function SignupWindow(props) {
   }), /*#__PURE__*/React.createElement("input", {
     className: "formSubmit",
     type: "submit",
-    value: "Sign Up"
-  }));
+    value: "Sign up"
+  }), /*#__PURE__*/React.createElement("p", null, "Already have an account? ", /*#__PURE__*/React.createElement("a", {
+    id: "signinLink",
+    href: "/signup"
+  }, "Sign in"))));
 };
 
 var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
-  }), document.querySelector("#content"));
+  }), document.querySelector("#content"), function () {
+    var signupLink = document.querySelector("#signupLink");
+    signupLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      createSignupWindow(csrf);
+      return false;
+    });
+  });
 };
 
 var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(SignupWindow, {
     csrf: csrf
-  }), document.querySelector("#content"));
+  }), document.querySelector("#content"), function () {
+    var signinLink = document.querySelector("#signinLink");
+    signinLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      createLoginWindow(csrf);
+      return false;
+    });
+  });
 };
 
 var setup = function setup(csrf) {
@@ -149,16 +164,12 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#songMessage").animate({
-    width: 'toggle'
-  }, 350);
+  $("#message").text(message);
+  $("#errorMessage").fadeIn();
 };
 
 var redirect = function redirect(response) {
-  $("#songMessage").animate({
-    width: 'hide'
-  }, 350);
+  $("#errorMessage").fadeOut();
   window.location = response.redirect;
 };
 
