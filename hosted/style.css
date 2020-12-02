@@ -340,7 +340,7 @@ h3.songLyrics {
     right: 0.4em;
 }
 
-.dropdown-content {
+.dropdownContent {
     /* display: none; */
     position: relative;
     margin-top: 60px;
@@ -351,7 +351,7 @@ h3.songLyrics {
     z-index: 1;
 }
 
-.dropdown-content a {
+.dropdownContent a {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
@@ -359,6 +359,21 @@ h3.songLyrics {
 }
 
 .dropdown a:hover {background-color: #f1f1f1}
+
+.chordParent {
+    position: relative;
+    display: inline;
+}
+
+.chordChild {
+    position: relative;
+    bottom: 1em;
+}
+
+#updateSongLyrics {
+    width: 500px;
+    height: 200px;
+}
 
 @media (min-width: 600px) {
     .songList { grid-template-columns: repeat(2, 1fr); }

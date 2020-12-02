@@ -107,6 +107,23 @@ const updateSong = (e) => {
 
 }
 
+const InsertChord = () => {
+    let cursorPos = $('textarea').prop('selectionStart');
+    let text = $('textarea').val();
+    let textBefore = text.substring(0,  cursorPos);
+    let textAfter  = text.substring(cursorPos, text.length);
+    $('textarea').val(textBefore + "^[*chord*]" + textAfter);
+
+    let searchText = "*chord*";
+    let textarea = document.querySelector("textarea");
+    let pos = textarea.value.indexOf(searchText);
+    if(pos!=-1) {
+    textarea.focus();
+    textarea.selectionStart = pos;
+    textarea.selectionEnd = pos+searchText.length
+    }
+}
+
 // song update form
 const UpdateSongForm = (props) => {
     if (props.visible) {
@@ -122,7 +139,8 @@ const UpdateSongForm = (props) => {
                 <label htmlFor="name">Name: </label>
                 <input id="updateSongName" type="text" name="name" defaultValue={props.name}/>
                 <label htmlFor="lyrics">Lyrics: </label>
-                <input id="updateSongLyrics" type="text" name="lyrics" defaultValue={props.lyrics}/>
+                <button type="button" onClick={InsertChord}>InsertChord</button>
+                <textarea id="updateSongLyrics" type="text" name="lyrics" defaultValue={props.lyrics}/>
                 <input type="hidden" name="_id" value={props._id}/>
                 <input type="hidden" name="_csrf" value={props.csrf}/>
                 <input className="makeSongSubmit" type="submit" value="Update Song" />
@@ -132,60 +150,67 @@ const UpdateSongForm = (props) => {
     return null;
 };
 
-class DropdownMenu extends React.Component {
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-          visible: false,
-        };
-        
-        this.showMenu = this.showMenu.bind(this);
-        this.closeMenu = this.closeMenu.bind(this);
-      }
-      
-      showMenu() {
-        this.setState({ visible: true }, () => {
-          document.addEventListener('click', this.closeMenu);
-        });
-      }
-      
-      closeMenu() {          
-          this.setState({ visible: false }, () => {
-            document.removeEventListener('click', this.closeMenu);
-          });  
-      }
-    
-      render() {
-        return (
-            <div>
-              <div className="test" onClick={this.showMenu}></div>
-              { this.state.visible && 
-                    <div className="dropdown-content" ref={(e) => {this.dropdownMenu = e; }}>
-                      <a href="#" onClick={() => {setUpdateSongVisible(true, this.props.song); return false;}}>Edit</a>
-                      <a href="#" onClick={() => {setConfirmDeleteVisible(true, this.props.song._id); return false;}}>Delete</a>
-                    </div>
-              }
-            </div>
-        );
-      }
+const DropdownMenu = (props) => {
+    const [visible, setVisible] = React.useState(false);
+    const showMenu = () => {
+        setVisible(true);
+        document.addEventListener('click', closeMenu);
     }
+      
+    const closeMenu = () => {          
+        setVisible(false);
+        document.removeEventListener('click', closeMenu);
+    }
+    
+    return (
+        <div>
+            <div className="test" onClick={showMenu}></div>
+            { visible && 
+                <div className="dropdownContent">
+                    <a href="#" onClick={() => {setUpdateSongVisible(true, props.song); return false;}}>Edit</a>
+                    <a href="#" onClick={() => {setConfirmDeleteVisible(true, props.song._id); return false;}}>Delete</a>
+                </div>
+            }
+        </div>
+    );
+}
+
     
 // grid of songs and song creation button
 const SongList = function(props) {
+    const [openSongVisible, setOpenSongVisible] = React.useState(false);
+    const [openSongName, setOpenSongName] = React.useState("");
+    const [openSongLyrics, setOpenSongLyrics] = React.useState("");
+    
+    const setupSongView = (e, song) => {
+        // dont open if clicking dropdown or its links
+        if(e.target.className !== "test" && e.target.tagName !== "A")
+        {
+            setOpenSongVisible(true);
+            setOpenSongName(song.name);
+            setOpenSongLyrics(song.lyrics);
+            document.addEventListener('click', closeSongView);
+        }
+    }
+
+    const closeSongView = () => {
+        setOpenSongVisible(false);
+        document.removeEventListener('click', closeSongView);
+    }
+
     const songNodes = props.songs.map(function(song) {
         return (
-            <div key={song._id} className="song">
+            <div key={song._id} className="song" onClick={(e) => setupSongView(e, song)}>
                 <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon"/>
                 <DropdownMenu song={song}/>
                 <h3 className="songName">Name {song.name} </h3>
-                <h3 className="songLyrics">Lyrics: {song.lyrics} </h3>
             </div>
         );
     });
 
     return (
         <div className="songList">
+            {openSongVisible && <SongView name={openSongName} lyrics={openSongLyrics}/>}
             <div className="song" onClick={() => setCreateSongVisible(true)}>
                 <img src="/assets/img/songIcon.jpeg" alt="song icon" className="songIcon" />
                 <h3 className="songName">+</h3>
@@ -194,6 +219,37 @@ const SongList = function(props) {
         </div>
     );
 };
+
+const parseChords = () => {
+    debugger;
+    let lyrics = document.querySelector("#lyrics");
+    let chords = lyrics.innerHTML.match(/(?<=\[).+?(?=\])/g);
+    let temp = lyrics.innerHTML;
+    for (let i = 0; i < chords.length; i++) {
+        temp = temp.replace(chords[i], `<div class="chordParent"><div class="chordParent">${chords[i]}</div></div>`);
+    }
+    let cleanup = temp.replace(/[\[\]^]+/g, "");
+    lyrics.innerHTML = cleanup;
+}
+
+const SongView = (props) => {
+    React.useEffect(() => {
+        const script = document.createElement('script');
+        script.innerHTML = "parseChords()";
+        document.body.appendChild(script);
+        return () => {
+            document.body.removeChild(script);
+        }
+    })
+    return (
+        <div className="songForm">
+            {props.name} <p> </p>
+            <div id="lyrics">
+                {props.lyrics}
+            </div>
+        </div>
+    )
+}
 
 // toggle song creation form
 const setCreateSongVisible = (visible) => {

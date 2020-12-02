@@ -16,6 +16,10 @@ const router = (app) => {
   app.get('/getUsername', mid.requiresLogin, controllers.Account.getUsername);
   app.post('/account', mid.requiresLogin, controllers.Account.updateAccount);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+  // handle 404
+  app.use((req, res, next) => {
+    res.status(404).send('<h1> Page not found </h1>');
+  });
 };
 
 module.exports = router;

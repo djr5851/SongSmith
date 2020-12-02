@@ -1,26 +1,16 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 // validate song and push to db
 var createSong = function createSong(e) {
@@ -156,6 +146,23 @@ var updateSong = function updateSong(e) {
     loadSongsFromServer();
   });
   return false;
+};
+
+var InsertChord = function InsertChord() {
+  var cursorPos = $('textarea').prop('selectionStart');
+  var text = $('textarea').val();
+  var textBefore = text.substring(0, cursorPos);
+  var textAfter = text.substring(cursorPos, text.length);
+  $('textarea').val(textBefore + "^[*chord*]" + textAfter);
+  var searchText = "*chord*";
+  var textarea = document.querySelector("textarea");
+  var pos = textarea.value.indexOf(searchText);
+
+  if (pos != -1) {
+    textarea.focus();
+    textarea.selectionStart = pos;
+    textarea.selectionEnd = pos + searchText.length;
+  }
 }; // song update form
 
 
@@ -184,7 +191,10 @@ var UpdateSongForm = function UpdateSongForm(props) {
       defaultValue: props.name
     }), /*#__PURE__*/React.createElement("label", {
       htmlFor: "lyrics"
-    }, "Lyrics: "), /*#__PURE__*/React.createElement("input", {
+    }, "Lyrics: "), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      onClick: InsertChord
+    }, "InsertChord"), /*#__PURE__*/React.createElement("textarea", {
       id: "updateSongLyrics",
       type: "text",
       name: "lyrics",
@@ -207,85 +217,81 @@ var UpdateSongForm = function UpdateSongForm(props) {
   return null;
 };
 
-var DropdownMenu = /*#__PURE__*/function (_React$Component) {
-  _inherits(DropdownMenu, _React$Component);
+var DropdownMenu = function DropdownMenu(props) {
+  var _React$useState = React.useState(false),
+      _React$useState2 = _slicedToArray(_React$useState, 2),
+      visible = _React$useState2[0],
+      setVisible = _React$useState2[1];
 
-  var _super = _createSuper(DropdownMenu);
+  var showMenu = function showMenu() {
+    setVisible(true);
+    document.addEventListener('click', closeMenu);
+  };
 
-  function DropdownMenu(props) {
-    var _this;
+  var closeMenu = function closeMenu() {
+    setVisible(false);
+    document.removeEventListener('click', closeMenu);
+  };
 
-    _classCallCheck(this, DropdownMenu);
-
-    _this = _super.call(this, props);
-    _this.state = {
-      visible: false
-    };
-    _this.showMenu = _this.showMenu.bind(_assertThisInitialized(_this));
-    _this.closeMenu = _this.closeMenu.bind(_assertThisInitialized(_this));
-    return _this;
-  }
-
-  _createClass(DropdownMenu, [{
-    key: "showMenu",
-    value: function showMenu() {
-      var _this2 = this;
-
-      this.setState({
-        visible: true
-      }, function () {
-        document.addEventListener('click', _this2.closeMenu);
-      });
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "test",
+    onClick: showMenu
+  }), visible && /*#__PURE__*/React.createElement("div", {
+    className: "dropdownContent"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "#",
+    onClick: function onClick() {
+      setUpdateSongVisible(true, props.song);
+      return false;
     }
-  }, {
-    key: "closeMenu",
-    value: function closeMenu() {
-      var _this3 = this;
-
-      this.setState({
-        visible: false
-      }, function () {
-        document.removeEventListener('click', _this3.closeMenu);
-      });
+  }, "Edit"), /*#__PURE__*/React.createElement("a", {
+    href: "#",
+    onClick: function onClick() {
+      setConfirmDeleteVisible(true, props.song._id);
+      return false;
     }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this4 = this;
-
-      return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-        className: "test",
-        onClick: this.showMenu
-      }), this.state.visible && /*#__PURE__*/React.createElement("div", {
-        className: "dropdown-content",
-        ref: function ref(e) {
-          _this4.dropdownMenu = e;
-        }
-      }, /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        onClick: function onClick() {
-          setUpdateSongVisible(true, _this4.props.song);
-          return false;
-        }
-      }, "Edit"), /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        onClick: function onClick() {
-          setConfirmDeleteVisible(true, _this4.props.song._id);
-          return false;
-        }
-      }, "Delete")));
-    }
-  }]);
-
-  return DropdownMenu;
-}(React.Component); // grid of songs and song creation button
+  }, "Delete")));
+}; // grid of songs and song creation button
 
 
 var SongList = function SongList(props) {
+  var _React$useState3 = React.useState(false),
+      _React$useState4 = _slicedToArray(_React$useState3, 2),
+      openSongVisible = _React$useState4[0],
+      setOpenSongVisible = _React$useState4[1];
+
+  var _React$useState5 = React.useState(""),
+      _React$useState6 = _slicedToArray(_React$useState5, 2),
+      openSongName = _React$useState6[0],
+      setOpenSongName = _React$useState6[1];
+
+  var _React$useState7 = React.useState(""),
+      _React$useState8 = _slicedToArray(_React$useState7, 2),
+      openSongLyrics = _React$useState8[0],
+      setOpenSongLyrics = _React$useState8[1];
+
+  var setupSongView = function setupSongView(e, song) {
+    // dont open if clicking dropdown or its links
+    if (e.target.className !== "test" && e.target.tagName !== "A") {
+      setOpenSongVisible(true);
+      setOpenSongName(song.name);
+      setOpenSongLyrics(song.lyrics);
+      document.addEventListener('click', closeSongView);
+    }
+  };
+
+  var closeSongView = function closeSongView() {
+    setOpenSongVisible(false);
+    document.removeEventListener('click', closeSongView);
+  };
+
   var songNodes = props.songs.map(function (song) {
     return /*#__PURE__*/React.createElement("div", {
       key: song._id,
-      className: "song"
+      className: "song",
+      onClick: function onClick(e) {
+        return setupSongView(e, song);
+      }
     }, /*#__PURE__*/React.createElement("img", {
       src: "/assets/img/songIcon.jpeg",
       alt: "song icon",
@@ -294,13 +300,14 @@ var SongList = function SongList(props) {
       song: song
     }), /*#__PURE__*/React.createElement("h3", {
       className: "songName"
-    }, "Name ", song.name, " "), /*#__PURE__*/React.createElement("h3", {
-      className: "songLyrics"
-    }, "Lyrics: ", song.lyrics, " "));
+    }, "Name ", song.name, " "));
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "songList"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, openSongVisible && /*#__PURE__*/React.createElement(SongView, {
+    name: openSongName,
+    lyrics: openSongLyrics
+  }), /*#__PURE__*/React.createElement("div", {
     className: "song",
     onClick: function onClick() {
       return setCreateSongVisible(true);
@@ -312,6 +319,36 @@ var SongList = function SongList(props) {
   }), /*#__PURE__*/React.createElement("h3", {
     className: "songName"
   }, "+")), songNodes);
+};
+
+var parseChords = function parseChords() {
+  debugger;
+  var lyrics = document.querySelector("#lyrics");
+  var chords = lyrics.innerHTML.match(/(?<=\[).+?(?=\])/g);
+  var temp = lyrics.innerHTML;
+
+  for (var i = 0; i < chords.length; i++) {
+    temp = temp.replace(chords[i], "<div class=\"chordParent\"><div class=\"chordParent\">".concat(chords[i], "</div></div>"));
+  }
+
+  var cleanup = temp.replace(/[\[\]^]+/g, "");
+  lyrics.innerHTML = cleanup;
+};
+
+var SongView = function SongView(props) {
+  React.useEffect(function () {
+    var script = document.createElement('script');
+    script.innerHTML = "parseChords()";
+    document.body.appendChild(script);
+    return function () {
+      document.body.removeChild(script);
+    };
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "songForm"
+  }, props.name, " ", /*#__PURE__*/React.createElement("p", null, " "), /*#__PURE__*/React.createElement("div", {
+    id: "lyrics"
+  }, props.lyrics));
 }; // toggle song creation form
 
 
