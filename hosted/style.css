@@ -255,7 +255,7 @@ h1 {
     left: 20px;
 }
 
-#speech {
+#errorBox {
     height: 120px;
     width: 250px;
     z-index:300;
