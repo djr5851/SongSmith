@@ -25,14 +25,14 @@ const setConfirmDeleteVisible = (visible, song) => {
         $("#overlay").fadeIn();
         sendAjax('GET', '/getToken', null, (result) => {
             ReactDOM.render(
-                <ConfirmDelete visible={true} song={song} csrf={result.csrfToken}/>, document.querySelector("#makeSong")
+                <ConfirmDelete visible={true} song={song} csrf={result.csrfToken}/>, document.querySelector("#songForms")
             );
         });
     }
     else {
         $("#overlay").fadeOut();
         ReactDOM.render(
-            <ConfirmDelete visible={false}/>, document.querySelector("#makeSong")
+            <ConfirmDelete visible={false}/>, document.querySelector("#songForms")
         );}
 };
 
@@ -273,6 +273,18 @@ const SongView = (props) => {
     )
 }
 
+// advertisement placeholder
+const Ad = () => {
+    return (
+        <div className="ad">
+            <a href="https://www.youtube.com/watch?v=6f4L8Yt5H9M">
+                <img src="/assets/img/ad.jpg" alt="ad"/>
+            </a>
+        </div>
+    )
+}
+
+
 // toggle song creation form
 const setCreateSongVisible = (visible) => {
     $("#errorMessage").fadeOut()
@@ -280,17 +292,19 @@ const setCreateSongVisible = (visible) => {
         $("#overlay").fadeIn();
         sendAjax('GET', '/getToken', null, (result) => {
             ReactDOM.render(
-                <CreateSongForm csrf={result.csrfToken} visible={true}/>, document.querySelector("#makeSong")
+                <CreateSongForm csrf={result.csrfToken} visible={true}/>, document.querySelector("#songForms")
             );        
         });
     }
     else {
         $("#overlay").fadeOut();
         ReactDOM.render(
-            <CreateSongForm visible={false}/>, document.querySelector("#makeSong")
+            <CreateSongForm visible={false}/>, document.querySelector("#songForms")
         );            
     }
 }
+
+
 // toggle song update form
 const setUpdateSongVisible = (visible, song) => {
     $("#errorMessage").fadeOut()
@@ -298,14 +312,14 @@ const setUpdateSongVisible = (visible, song) => {
         $("#overlay").fadeIn();
         sendAjax('GET', '/getToken', null, (result) => {
             ReactDOM.render(
-                <UpdateSongForm _id={song._id} name={song.name} lyrics={song.lyrics} csrf={result.csrfToken} visible={true}/>, document.querySelector("#makeSong")
+                <UpdateSongForm _id={song._id} name={song.name} lyrics={song.lyrics} csrf={result.csrfToken} visible={true}/>, document.querySelector("#songForms")
             );        
         });
     }
     else {
         $("#overlay").fadeOut();
         ReactDOM.render(
-            <UpdateSongForm visible={false}/>, document.querySelector("#makeSong")
+            <UpdateSongForm visible={false}/>, document.querySelector("#songForms")
         );            
     }
 }
@@ -321,7 +335,9 @@ const loadSongsFromServer = () => {
 
 // load songs once page loads
 $(document).ready(function() {
-    //getToken();
-
+    // Render ad
+    ReactDOM.render(
+        <Ad />, document.querySelector("#ad")
+    );
     loadSongsFromServer();
 });

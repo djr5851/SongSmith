@@ -39,13 +39,13 @@ var setConfirmDeleteVisible = function setConfirmDeleteVisible(visible, song) {
         visible: true,
         song: song,
         csrf: result.csrfToken
-      }), document.querySelector("#makeSong"));
+      }), document.querySelector("#songForms"));
     });
   } else {
     $("#overlay").fadeOut();
     ReactDOM.render( /*#__PURE__*/React.createElement(ConfirmDelete, {
       visible: false
-    }), document.querySelector("#makeSong"));
+    }), document.querySelector("#songForms"));
   }
 }; // confirm deletion window
 
@@ -371,6 +371,18 @@ var SongView = function SongView(props) {
   }), /*#__PURE__*/React.createElement("h1", null, "\"", props.name, "\""), /*#__PURE__*/React.createElement("div", {
     id: "lyrics"
   }, /*#__PURE__*/React.createElement("p", null, props.lyrics)));
+}; // advertisement placeholder
+
+
+var Ad = function Ad() {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "ad"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "https://www.youtube.com/watch?v=6f4L8Yt5H9M"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "/assets/img/ad.jpg",
+    alt: "ad"
+  })));
 }; // toggle song creation form
 
 
@@ -383,13 +395,13 @@ var setCreateSongVisible = function setCreateSongVisible(visible) {
       ReactDOM.render( /*#__PURE__*/React.createElement(CreateSongForm, {
         csrf: result.csrfToken,
         visible: true
-      }), document.querySelector("#makeSong"));
+      }), document.querySelector("#songForms"));
     });
   } else {
     $("#overlay").fadeOut();
     ReactDOM.render( /*#__PURE__*/React.createElement(CreateSongForm, {
       visible: false
-    }), document.querySelector("#makeSong"));
+    }), document.querySelector("#songForms"));
   }
 }; // toggle song update form
 
@@ -406,13 +418,13 @@ var setUpdateSongVisible = function setUpdateSongVisible(visible, song) {
         lyrics: song.lyrics,
         csrf: result.csrfToken,
         visible: true
-      }), document.querySelector("#makeSong"));
+      }), document.querySelector("#songForms"));
     });
   } else {
     $("#overlay").fadeOut();
     ReactDOM.render( /*#__PURE__*/React.createElement(UpdateSongForm, {
       visible: false
-    }), document.querySelector("#makeSong"));
+    }), document.querySelector("#songForms"));
   }
 }; // get songs from db
 
@@ -427,7 +439,8 @@ var loadSongsFromServer = function loadSongsFromServer() {
 
 
 $(document).ready(function () {
-  //getToken();
+  // Render ad
+  ReactDOM.render( /*#__PURE__*/React.createElement(Ad, null), document.querySelector("#ad"));
   loadSongsFromServer();
 });
 "use strict";

@@ -408,6 +408,13 @@ textArea {
     padding-left: 30px;
 }
 
+.ad img{
+    display: block;
+    margin: 0 auto;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
 @media (min-width: 600px) {
     .songList { grid-template-columns: repeat(2, 1fr); }
 }
